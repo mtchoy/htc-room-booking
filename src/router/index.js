@@ -10,6 +10,11 @@ const router = createRouter({
       name: 'home',
       component: Home,
     },
+    {
+      path: '/bookings',
+      name: 'booking-list',
+      component: () => import('../views/BookingList.vue'),
+    },
   ],
 });
 
