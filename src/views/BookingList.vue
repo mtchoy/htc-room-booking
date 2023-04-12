@@ -3,10 +3,6 @@ import { ref } from 'vue'
 import OrugaTable from '../components/OrugaTable.vue'
 
 const isSwitchedCustom = ref("My Bookings")
-
-function filter() {
-    console.log("filter")
-}
 </script>
 
 <template>
@@ -18,7 +14,7 @@ function filter() {
     </o-field>
 
     <o-tabs type="boxes">
-        <o-tab-item label="All" icon="images">
+        <o-tab-item label="All" icon="select-all">
             <OrugaTable :isReviewer="isSwitchedCustom === 'Review Bookings'" status=""></OrugaTable>
         </o-tab-item>
         <o-tab-item label="Pending" icon="account-clock">

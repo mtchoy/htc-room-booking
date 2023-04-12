@@ -14,7 +14,7 @@ const sortField = ref('vote_count')
 const sortOrder = ref('desc')
 const defaultSortOrder = ref('desc')
 const page = ref(1)
-const perPage = ref(12)
+const perPage = ref(10)
 
 const loadAsyncData = () => {
     var params = [
@@ -23,6 +23,7 @@ const loadAsyncData = () => {
         // 'include_adult=false',
         // 'include_video=false',
         // `sort_by=${sortField.value}.${sortOrder.value}`,
+        `limit=${perPage.value}`,
         `page=${page.value}`,
     ].join('&');
 
@@ -50,6 +51,11 @@ const loadAsyncData = () => {
             //     return item
             // });
             data.value = result.result
+
+            // while (data.value.length < 10) {
+            //     data.value.push({})
+            // }
+
             loading.value = false
         })
         .catch((error) => {
@@ -98,80 +104,80 @@ onMounted(() => {
 
 <template>
     <!-- <section> -->
-        <o-table :data="data" :loading="loading" paginated backend-pagination :total="total" :per-page="perPage"
-            @page-change="onPageChange" aria-next-label="Next page" aria-previous-label="Previous page"
-            aria-page-label="Page" aria-current-label="Current page" backend-sorting
-            :default-sort-direction="defaultSortOrder" :default-sort="[sortField, sortOrder]" @sort="onSort">
+    <o-table :data="data" :loading="loading" paginated backend-pagination :total="total" :per-page="perPage"
+        @page-change="onPageChange" aria-next-label="Next page" aria-previous-label="Previous page" aria-page-label="Page"
+        aria-current-label="Current page" backend-sorting :default-sort-direction="defaultSortOrder"
+        :default-sort="[sortField, sortOrder]" @sort="onSort" height="480px">
 
-            <o-table-column field="id" label="ID" width="40" numeric v-slot="props">
-                {{ props.row.id }}
-            </o-table-column>
+        <o-table-column field="id" label="ID" width="40" numeric v-slot="props">
+            {{ props.row.id }}
+        </o-table-column>
 
-            <o-table-column field="createdAt" label="Created At" numeric v-slot="props">
-                {{ new Date(props.row.createdAt).toLocaleString("en-CA", {
-                    timeZone: "Asia/Hong_Kong", hour12:
-                        false
-                }) }}
-            </o-table-column>
+        <o-table-column field="createdAt" label="Created At" numeric v-slot="props">
+            {{ new Date(props.row.createdAt).toLocaleString("en-CA", {
+                timeZone: "Asia/Hong_Kong", hour12:
+                    false
+            }) }}
+        </o-table-column>
 
-            <o-table-column field="username" label="Username" v-slot="props" v-if="isReviewer">
-                {{ props.row.username }}
-            </o-table-column>
+        <o-table-column field="username" label="Username" v-slot="props" v-if="isReviewer">
+            {{ props.row.username }}
+        </o-table-column>
 
-            <o-table-column field="user" label="User/Org" v-slot="props">
-                {{ props.row.user }}
-            </o-table-column>
+        <o-table-column field="user" label="User/Org" v-slot="props">
+            {{ props.row.user }}
+        </o-table-column>
 
-            <o-table-column field="room" label="Room" v-slot="props">
-                {{ props.row.room }}
-            </o-table-column>
+        <o-table-column field="room" label="Room" v-slot="props">
+            {{ props.row.room }}
+        </o-table-column>
 
-            <o-table-column field="date" label="Date" centered v-slot="props">
-                <!-- <span class="tag is-success"> -->
-                {{ new Date(props.row.date).toLocaleDateString("en-CA", { timeZone: "Asia/Hong_Kong" }) }}
-                <!-- </span> -->
-            </o-table-column>
+        <o-table-column field="date" label="Date" centered v-slot="props">
+            <!-- <span class="tag is-success"> -->
+            {{ new Date(props.row.date).toLocaleDateString("en-CA", { timeZone: "Asia/Hong_Kong" }) }}
+            <!-- </span> -->
+        </o-table-column>
 
-            <o-table-column field="status" label="Status" v-slot="props">
-                <a :href="/booking/ + props.row.id">
-                    <span class="tag is-warning" v-if="props.row.status == 'Pending'">
-                        {{ props.row.status }}
-                    </span>
-                    <span class="tag is-danger" v-if="props.row.status == 'Rejected'">
-                        {{ props.row.status }}
-                    </span>
-                    <span class="tag is-success" v-if="props.row.status == 'Approved'">
-                        {{ props.row.status }}
-                    </span>
-                </a>
-            </o-table-column>
+        <o-table-column field="status" label="Status" v-slot="props">
+            <a :href="/booking/ + props.row.id">
+                <span class="tag is-warning" v-if="props.row.status == 'Pending'">
+                    {{ props.row.status }}
+                </span>
+                <span class="tag is-danger" v-if="props.row.status == 'Rejected'">
+                    {{ props.row.status }}
+                </span>
+                <span class="tag is-success" v-if="props.row.status == 'Approved'">
+                    {{ props.row.status }}
+                </span>
+            </a>
+        </o-table-column>
 
-            <!-- <o-table-column field="original_title" label="Title" sortable #default="props">
-                    {{ props.row.original_title }}
-                </o-table-column>
-                <o-table-column field="vote_average" label="Vote Average" numeric sortable #default="props">
-                    <span class="tag" :class="type(props.row.vote_average)">
-                        {{ props.row.vote_average }}
-                    </span>
-                </o-table-column>
-                <o-table-column field="vote_count" label="Vote Count" numeric sortable #default="props">
-                    {{ props.row.vote_count }}
-                </o-table-column>
-                <o-table-column field="release_date" label="Release Date" sortable centered #default="props">
-                    {{
-                        props.row.release_date
-                        ? new Date(props.row.release_date).toLocaleDateString()
-                        : 'unknown'
-                    }}
-                </o-table-column>
-                <o-table-column label="Overview" width="500" #default="props">
-                    {{ props.row.overview }}
-                </o-table-column> -->
-        </o-table>
+        <!-- <o-table-column field="original_title" label="Title" sortable #default="props">
+                        {{ props.row.original_title }}
+                    </o-table-column>
+                    <o-table-column field="vote_average" label="Vote Average" numeric sortable #default="props">
+                        <span class="tag" :class="type(props.row.vote_average)">
+                            {{ props.row.vote_average }}
+                        </span>
+                    </o-table-column>
+                    <o-table-column field="vote_count" label="Vote Count" numeric sortable #default="props">
+                        {{ props.row.vote_count }}
+                    </o-table-column>
+                    <o-table-column field="release_date" label="Release Date" sortable centered #default="props">
+                        {{
+                            props.row.release_date
+                            ? new Date(props.row.release_date).toLocaleDateString()
+                            : 'unknown'
+                        }}
+                    </o-table-column>
+                    <o-table-column label="Overview" width="500" #default="props">
+                        {{ props.row.overview }}
+                    </o-table-column> -->
+    </o-table>
     <!-- </section> -->
     <!-- <div v-if="bookings.length == 0">
-                                                No Bookings
-                                            </div> -->
+                                                    No Bookings
+                                                </div> -->
 
     <!-- </div> -->
 </template>
