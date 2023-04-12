@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 // const checkToken = require('../middlewares/checkToken');
-const { connectToDB, ObjectId } = require('../util/db');
+const { connectToDB, ObjectId } = require('../utils/db');
 
 // Get all timeslot item
 router.get('/', async (req, res) => {

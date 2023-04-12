@@ -2,7 +2,8 @@ var express = require('express');
 var router = express.Router();
 
 // const checkToken = require('../middlewares/checkToken');
-const { connectToDB, ObjectId } = require('../util/db');
+const { connectToDB, ObjectId } = require('../utils/db');
+const { sendEmail } = require('../utils/send-email');
 
 // Create new booking item
 router.post('/', async (req, res) => {
@@ -24,10 +25,14 @@ router.post('/', async (req, res) => {
 
 // Get all booking item
 router.get('/', async (req, res) => {
-    const { status, isMine } = req.query;
+    const { status, isReviewer } = req.query;
     const query = status ? { status } : {};
 
-    if (isMine === 'true') {
+    if (isReviewer) {
+        if (req.user.role !== 'admin') {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+    } else {
         query.userId = new ObjectId(req.user._id);
     }
 
@@ -62,7 +67,7 @@ router.get('/', async (req, res) => {
 // Get booking item by id
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
-    
+
     const db = await connectToDB();
     try {
         const result = await db.collection('booking').findOne({ _id: new ObjectId(id) });
@@ -84,6 +89,9 @@ router.put('/:id', async (req, res) => {
     try {
         const result = await db.collection('booking').updateOne({ _id: new ObjectId(id) }, { $set: { status, updatedAt } });
         await db.collection('timeslot').updateOne({ booking: new ObjectId(id) }, { $set: { status, updatedAt } });
+
+        sendEmail(result);
+
         res.status(200).json({ message: 'Booking status updated successfully' });
     } catch (err) {
         res.status(400).json({ message: err.message });
