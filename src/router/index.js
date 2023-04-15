@@ -16,6 +16,16 @@ const router = createRouter({
       component: () => import('../views/BookingList.vue'),
     },
     {
+      path: '/booking',
+      name: 'new-booking',
+      component: () => import('../views/BookingView.vue'),
+    },
+    {
+      path: '/booking/:id',
+      name: 'booking-view',
+      component: () => import('../views/BookingView.vue'),
+    },
+    {
       path: '/chart-view/:mode',
       name: 'chart-view',
       component: () => import('../views/ChartView.vue'),

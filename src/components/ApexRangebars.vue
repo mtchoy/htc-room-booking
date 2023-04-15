@@ -1,11 +1,15 @@
 <script setup>
 import { ref, onMounted, watch, toRaw } from 'vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
     date: Date,
     room: String,
     msg: String,
 })
+
+const router = useRouter()
+const canReview = ref(true);
 
 const options = ref({
     plotOptions: {
@@ -59,7 +63,7 @@ const series = ref([{
     data: []
 }]);
 
-const buildChart = () => {
+const buildChart = async () => {
 
     var open = props.date.getTime() + 28800000 + 25200000;   // UTC+8 and 7am
     var close = open + 39600000;    // 11 hours
@@ -75,10 +79,21 @@ const buildChart = () => {
         hiddenGroup = rooms.map(room => ({ x: room }))
     }
 
-    fetchSlots(hiddenGroup, open, close);
+    await fetchSlots(hiddenGroup);
+
+    options.value = {
+        ...options.value, ...{
+            xaxis: {
+                ...options.value.xaxis, ...{
+                    min: open - 288000,
+                    max: close + 288000,
+                }
+            }
+        }
+    };
 };
 
-const fetchSlots = async (hiddenGroup, open, close) => {
+const fetchSlots = async (hiddenGroup) => {
 
     const roomParams = props.room ? `&room=${props.room}` : "";
 
@@ -121,70 +136,17 @@ const fetchSlots = async (hiddenGroup, open, close) => {
                 }];
         }
 
-        options.value = {
-            ...options.value, ...{
-                xaxis: {
-                    ...options.value.xaxis, ...{
-                        min: open - 288000,
-                        max: close + 288000,
-                    }
-                }
-            }
-        };
-
     } else {
         var message = await response.json();
         alert(JSON.stringify(message));
     }
 }
 
-// const fetchSlotsByDate = async () => {
+const dataPointSelectionHandler = (event, chartContext, config) => {
 
-//     var response = await fetch(`/api/timeslots?date=${props.date.toISOString()}`);
-
-//     if (response.ok) {
-
-//         const slots = await response.json();
-
-
-
-//     } else {
-//         var message = await response.json();
-//         alert(JSON.stringify(message));
-//     }
-
-// };
-
-// const fetchSlotsByRoom = async () => {
-
-//     var response = await fetch(`/api/timeslots?date=${props.date.toISOString()}&room=${props.room}`);
-
-//     if (response.ok) {
-
-//         var slots = await response.json();
-
-
-
-//     } else {
-//         var message = await response.json();
-//         alert(JSON.stringify(message));
-//     }
-// };
-
-const clickHandler = (event, chartContext, config) => {
-
-    // if (canReview.value) {
-
-    //     var series = series.value[config.seriesIndex];
-
-    //     if (series) {
-
-    //         var id = series.data[config.dataPointIndex].booking;
-
-    //         if (id) location.assign("/booking/" + id);
-
-    //     }
-    // }
+    if (canReview.value) {
+        router.push(`/booking/${series.value[config.seriesIndex].data[config.dataPointIndex].booking}`);
+    }
 };
 
 watch(() => props.date, () => {
@@ -202,7 +164,7 @@ onMounted(() => {
 
 <template>
     <apexchart type="rangeBar" width="1280px" height="640px" :options="options" :series="toRaw(series)"
-        @click="clickHandler">
+        @dataPointSelection="dataPointSelectionHandler">
     </apexchart>
 </template>
 

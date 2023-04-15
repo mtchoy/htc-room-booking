@@ -1,5 +1,5 @@
 <script setup>
-import { ref, toRaw } from 'vue'
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import ApexRangebars from '../components/ApexRangebars.vue'
 
@@ -67,8 +67,6 @@ const nextMonth = async function () {
                 v-model="date" editable icon="calendar-today">
             </o-datepicker>
         </o-field>
-
-        
 
         <o-button class="is-flex-grow-0"  label="Next Day" icon-right="chevron-right" v-if="!room" @click="nextDay">
         </o-button>

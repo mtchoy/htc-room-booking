@@ -139,7 +139,7 @@ onMounted(() => {
         </o-table-column>
 
         <o-table-column field="status" label="Status" v-slot="props">
-            <a :href="/booking/ + props.row.id">
+            <router-link :to="'/booking/' + props.row.id">
                 <span class="tag is-warning" v-if="props.row.status == 'Pending'">
                     {{ props.row.status }}
                 </span>
@@ -149,35 +149,35 @@ onMounted(() => {
                 <span class="tag is-success" v-if="props.row.status == 'Approved'">
                     {{ props.row.status }}
                 </span>
-            </a>
+            </router-link>
         </o-table-column>
 
         <!-- <o-table-column field="original_title" label="Title" sortable #default="props">
-                        {{ props.row.original_title }}
-                    </o-table-column>
-                    <o-table-column field="vote_average" label="Vote Average" numeric sortable #default="props">
-                        <span class="tag" :class="type(props.row.vote_average)">
-                            {{ props.row.vote_average }}
-                        </span>
-                    </o-table-column>
-                    <o-table-column field="vote_count" label="Vote Count" numeric sortable #default="props">
-                        {{ props.row.vote_count }}
-                    </o-table-column>
-                    <o-table-column field="release_date" label="Release Date" sortable centered #default="props">
-                        {{
-                            props.row.release_date
-                            ? new Date(props.row.release_date).toLocaleDateString()
-                            : 'unknown'
-                        }}
-                    </o-table-column>
-                    <o-table-column label="Overview" width="500" #default="props">
-                        {{ props.row.overview }}
-                    </o-table-column> -->
+                            {{ props.row.original_title }}
+                        </o-table-column>
+                        <o-table-column field="vote_average" label="Vote Average" numeric sortable #default="props">
+                            <span class="tag" :class="type(props.row.vote_average)">
+                                {{ props.row.vote_average }}
+                            </span>
+                        </o-table-column>
+                        <o-table-column field="vote_count" label="Vote Count" numeric sortable #default="props">
+                            {{ props.row.vote_count }}
+                        </o-table-column>
+                        <o-table-column field="release_date" label="Release Date" sortable centered #default="props">
+                            {{
+                                props.row.release_date
+                                ? new Date(props.row.release_date).toLocaleDateString()
+                                : 'unknown'
+                            }}
+                        </o-table-column>
+                        <o-table-column label="Overview" width="500" #default="props">
+                            {{ props.row.overview }}
+                        </o-table-column> -->
     </o-table>
     <!-- </section> -->
     <!-- <div v-if="bookings.length == 0">
-                                                    No Bookings
-                                                </div> -->
+                                                        No Bookings
+                                                    </div> -->
 
     <!-- </div> -->
 </template>
