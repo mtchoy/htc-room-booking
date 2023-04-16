@@ -3,6 +3,7 @@
 
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import printJS from 'print-js';
 
 const today = new Date();
 
@@ -57,7 +58,7 @@ const isImageModalActive = ref(false);
 const isReading = ref(id ? true : false);
 const isPrinting = ref(false);
 const canBook = ref("<%= (!req.session.canBook) %>" == "false");
-const canReview = ref("<%= (!req.session.canReview) %>" == "false");
+const canReview = ref(true);
 const canApprove = ref("<%= (!req.session.canApprove) %>" == "false");
 const selectedRoom = ref({})
 
@@ -140,9 +141,11 @@ const fetchThisBooking = async function () {
         const jsonData = await response.json();
         var result = jsonData.result;
 
-        result.dateString = new Date(result.date).toLocaleDateString('en-CA');
-        result.startTimeString = new Date(result.startTime).toLocaleTimeString('en-CA', { hour12: false, hour: '2-digit', minute: '2-digit' });
-        result.endTimeString = new Date(result.endTime).toLocaleTimeString('en-CA', { hour12: false, hour: '2-digit', minute: '2-digit' });
+        if (!isReading) {
+            result.date = new Date(result.date)
+            result.startTime = new Date(result.startTime)
+            result.endTime = new Date(result.endTime)
+        }
 
         booking.value = result;
 
@@ -180,14 +183,14 @@ const changeStatus = async function (newStatus) {
 
 const fileChanged = async function () {
 
-    if (!["png", "jpeg", "jpg", "gif"].includes(this.dropFile.name.split(".").pop().toLowerCase())) {
-        this.dropFile = null;
-        this.$buefy.snackbar.open("Only image files are allowed");
+    if (!["png", "jpeg", "jpg", "gif"].includes(dropFile.name.split(".").pop().toLowerCase())) {
+        dropFile.value = null;
+        $buefy.snackbar.open("Only image files are allowed");
         return
     }
 
     const formData = new FormData();
-    formData.append('avatar', this.dropFile);
+    formData.append('avatar', dropFile.value);
 
     try {
         var response = await fetch("/file/upload", {
@@ -199,7 +202,7 @@ const fileChanged = async function () {
             // var pieces = data.files[0].fd.split("/");
             // this.booking.fd = "/images/" + pieces.pop();
 
-            this.booking.fd = data.files[0].fd;
+            booking.value.fd = data.files[0].fd;
 
         } else {
             console.log(response.status);
@@ -241,20 +244,22 @@ const withdraw = function () {
     })
 }
 
-const printpdf = async function () {
-    this.isPrinting = true;
-    await this.$nextTick();
+const printpdf = function () {
+    isPrinting.value = true;
+    // await $nextTick();
 
     printJS({
         printable: 'app', type: 'html', scanStyles: true,
-        css: ["https://unpkg.com/buefy/dist/buefy.min.css",
-            "https://cdn.jsdelivr.net/npm/@mdi/font@5.8.55/css/materialdesignicons.min.css"],
+        // css: ["https://unpkg.com/buefy/dist/buefy.min.css",
+        //     "https://cdn.jsdelivr.net/npm/@mdi/font@5.8.55/css/materialdesignicons.min.css"],
+        css: ["/node_modules/bulma/css/bulma.min.css",
+            "/node_modules/@mdi/font/css/materialdesignicons.min.css"],
         // style: ".o-checkbox.checkbox input[type=checkbox]:checked+.check:before { content: '✔️';}",
         style: "* { color-adjust: exact; -webkit-print-color-adjust: exact; }",
         documentTitle: "Room Booking System #" + id
     });
 
-    this.isPrinting = false;
+    isPrinting.value = false;
 };
 
 const validate = function () {
@@ -319,10 +324,8 @@ onMounted(() => {
                     <o-datepicker placeholder="Click to select..." :min-date="minDate" :max-date="maxDate" locale="en-CA"
                         v-model="booking.date" v-if="!isReading" editable icon="calendar-today" required>
                     </o-datepicker>
-                    <o-input v-model="booking.dateString" v-if="isReading" readonly></o-input>
+                    <o-input v-model="booking.date" v-if="isReading" readonly></o-input>
                 </o-field>
-
-
 
                 <o-field class="column is-half" :label="isPrinting ? '開始時間' : 'Start time'">
                     <o-timepicker rounded placeholder="Click to select..." icon="clock" :enable-seconds="enableSeconds"
@@ -330,7 +333,7 @@ onMounted(() => {
                         v-model="booking.startTime" v-if="!isReading" :min-time="minTime" :max-time="maxTime"
                         :mobile-native="false" editable required>
                     </o-timepicker>
-                    <o-input v-model="booking.startTimeString" v-if="isReading" readonly>
+                    <o-input v-model="booking.startTime" v-if="isReading" readonly>
                     </o-input>
                 </o-field>
 
@@ -340,10 +343,9 @@ onMounted(() => {
                         v-model="booking.endTime" v-if="!isReading" :min-time="minTime" :max-time="maxTime"
                         :mobile-native="false" editable required>
                     </o-timepicker>
-                    <o-input v-model="booking.endTimeString" v-if="isReading" readonly>
+                    <o-input v-model="booking.endTime" v-if="isReading" readonly>
                     </o-input>
                 </o-field>
-
 
                 <o-field :label="isPrinting ? '預留形式' : 'Recurrent'" class="column">
                     <o-radio v-model="booking.recurrent" native-value="0" v-if="!isReading">
@@ -366,14 +368,12 @@ onMounted(() => {
                     </o-input>
                 </o-field>
 
-
                 <o-field class="column" :label="isPrinting ? '次數' : 'Number of Times'">
                     <o-input type="number" controls-position="compact" controls-rounded v-model="booking.repeatedTimes"
                         placeholder="1" :min="1" max="99" :disabled="booking.recurrent == 'once'" v-if="!isReading">
                     </o-input>
                     <o-input v-model="booking.repeatedTimes" v-if="isReading" readonly></o-input>
                 </o-field>
-
 
                 <o-field class="column is-full" :label="isPrinting ? '學會/班級名稱' : 'User / Organization'">
                     <o-input placeholder="No label" rounded v-model="booking.user" :readonly="isReading" maxlength="70"
@@ -480,10 +480,10 @@ onMounted(() => {
                     </div>
 
                     <!-- <figure class="image is-5by2">
-                                                                                                <img :src="booking.preSignedURL" @click="isImageModalActive = true"
-                                                                                                    v-if="booking.preSignedURL" />
-                                                                                                <o-skeleton height="180px" v-if="!booking.preSignedURL"></o-skeleton>
-                                                                                            </figure> -->
+                                                                                                        <img :src="booking.preSignedURL" @click="isImageModalActive = true"
+                                                                                                            v-if="booking.preSignedURL" />
+                                                                                                        <o-skeleton height="180px" v-if="!booking.preSignedURL"></o-skeleton>
+                                                                                                    </figure> -->
 
                     <o-modal v-model="isImageModalActive">
                         <p class="image">

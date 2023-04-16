@@ -13,6 +13,7 @@
     "@oruga-ui/oruga-next": "^0.5.10",
     "@oruga-ui/theme-bulma": "^0.2.9",
     "apexcharts": "^3.37.3",
+    "print-js": "^1.6.0",
     "vue": "^3.2.47",
     "vue-navigation-bar": "^5.0.2",
     "vue-router": "^4.1.6",
