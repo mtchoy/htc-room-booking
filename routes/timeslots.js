@@ -14,17 +14,18 @@ router.get('/', async (req, res) => {
         return;
     }
 
-    const dateObj = new Date(date);
-
-    const query = { startTime: { $gt: dateObj } };
+    var startDate = new Date(date);
+    const query = { startTime: { $gt: startDate } };
+    var endDate = new Date();
 
     if (room) {
         query.room = room;
-        query.endTime = { $lt: new Date(dateObj.getTime() + 31 * 86400000) }
+        endDate.setDate(startDate.getDate() + 31) // 31 days
     } else {
-        query.endTime = { $lt: new Date(dateObj.getTime() + 86400000) }
+        endDate.setDate(startDate.getDate() + 1) // 1 day
     }
 
+    query.endTime = { $lt: endDate }
     query.status = { $in: ["Pending", "Approved", "Blocked"] }
 
     const db = await connectToDB();

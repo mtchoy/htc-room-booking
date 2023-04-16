@@ -3,6 +3,7 @@ var router = express.Router();
 
 // const checkToken = require('../middlewares/checkToken');
 const { connectToDB, ObjectId } = require('../utils/db');
+const rooms = require('../utils/equipments.json');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -32,11 +33,13 @@ router.post('/login', async function (req, res, next) {
     const db = await connectToDB();
     try {
       const result = await db.collection('user').findOne({ email: payload.email })
-        || { email: payload.email, role: "member" };
+        || { email: payload.email, role: "member" }
+
+      const room_ids = rooms.map(room => room.id);
 
       // generate token
       const token = jwt.sign({ email: result.email, role: result.role }, process.env.TOKEN_SECRET);
-      res.header('auth-token', token).status(200).json({ message: 'User logged in successfully' });
+      res.header('auth-token', token).status(200).json({ message: 'User logged in successfully', rooms: room_ids });
 
     } catch (err) {
       res.status(400).json({ message: err.message }); // 400 Bad Request
