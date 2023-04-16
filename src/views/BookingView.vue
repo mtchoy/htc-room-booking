@@ -1,9 +1,11 @@
 <script setup>
 // import HelloWorld from '../components/HelloWorld.vue'
 
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
-import printJS from 'print-js';
+import print from 'vue3-print-nb'
+
+const vPrint = print;
 
 const today = new Date();
 
@@ -244,22 +246,43 @@ const withdraw = function () {
     })
 }
 
-const printpdf = function () {
+const printpdf = async function () {
     isPrinting.value = true;
-    // await $nextTick();
+    // await nextTick();
 
-    printJS({
-        printable: 'app', type: 'html', scanStyles: true,
-        // css: ["https://unpkg.com/buefy/dist/buefy.min.css",
-        //     "https://cdn.jsdelivr.net/npm/@mdi/font@5.8.55/css/materialdesignicons.min.css"],
-        css: ["/node_modules/bulma/css/bulma.min.css",
-            "/node_modules/@mdi/font/css/materialdesignicons.min.css"],
-        // style: ".o-checkbox.checkbox input[type=checkbox]:checked+.check:before { content: '✔️';}",
-        style: "* { color-adjust: exact; -webkit-print-color-adjust: exact; }",
-        documentTitle: "Room Booking System #" + id
-    });
+    // printJS({
+    //     printable: 'app', type: 'html', scanStyles: true,
+    //     // css: ["https://unpkg.com/buefy/dist/buefy.min.css",
+    //     //     "https://cdn.jsdelivr.net/npm/@mdi/font@5.8.55/css/materialdesignicons.min.css"],
+    //     css: ["/node_modules/bulma/css/bulma.min.css",
+    //         "/node_modules/@mdi/font/css/materialdesignicons.min.css"],
+    //     // style: ".o-checkbox.checkbox input[type=checkbox]:checked+.check:before { content: '✔️';}",
+    //     style: "* { color-adjust: exact; -webkit-print-color-adjust: exact; }",
+    //     documentTitle: "Room Booking System #" + id
+    // });
 
-    isPrinting.value = false;
+    // isPrinting.value = false;
+};
+
+const printLoading = ref(true);
+
+const printObj = {
+    id: "printMe",
+    popTitle: 'good print',
+    // extraCss: "https://cdn.bootcdn.net/ajax/libs/animate.css/4.1.1/animate.compat.css, https://cdn.bootcdn.net/ajax/libs/hover.css/2.3.1/css/hover-min.css",
+    // extraHead: '<meta http-equiv="Content-Language"content="zh-cn"/>',
+    beforeOpenCallback(vue) {
+        vue.printLoading = true;
+        // console.log('打开之前')
+    },
+    openCallback(vue) {
+        vue.printLoading = false
+        // console.log('执行了打印')
+    },
+    closeCallback(vue) {
+        isPrinting.value = false;
+        // console.log('关闭了打印工具')
+    }
 };
 
 const validate = function () {
@@ -306,7 +329,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <form class="container columns is-centered" @submit.prevent="submitForm">
+    <form id="printMe" class="container columns is-centered" @submit.prevent="submitForm">
         <div class="column is-half">
             <div class="columns is-multiline">
 
@@ -480,10 +503,10 @@ onMounted(() => {
                     </div>
 
                     <!-- <figure class="image is-5by2">
-                                                                                                        <img :src="booking.preSignedURL" @click="isImageModalActive = true"
-                                                                                                            v-if="booking.preSignedURL" />
-                                                                                                        <o-skeleton height="180px" v-if="!booking.preSignedURL"></o-skeleton>
-                                                                                                    </figure> -->
+                                                                                                                            <img :src="booking.preSignedURL" @click="isImageModalActive = true"
+                                                                                                                                v-if="booking.preSignedURL" />
+                                                                                                                            <o-skeleton height="180px" v-if="!booking.preSignedURL"></o-skeleton>
+                                                                                                                        </figure> -->
 
                     <o-modal v-model="isImageModalActive">
                         <p class="image">
@@ -561,6 +584,9 @@ onMounted(() => {
 
         </div>
     </form>
+
+    <button @click="printpdf()" v-print="printObj">Print local range</button>
+    <div id="loading" v-show="printLoading"></div>
 
     <div class="container" v-if="isPrinting && booking.preSignedURL">
         <img :src="booking.preSignedURL" />
