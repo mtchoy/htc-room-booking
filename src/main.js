@@ -21,7 +21,17 @@ localStorage.setItem("rooms", JSON.stringify(
         "Rm207", "Rm208", "Rm209", "Rm211", "Rm212", "Rm301", "Rm302", "Rm303", "Rm304", "Rm305", "Rm306",
         "Rm311", "Rm312", "Rm405", "Rm411", "Rm412", "Rm414", "Rm418", "Rm419", "Rm501", "Rm504"]))
 
-createApp(App).use(router).use(Oruga, bulmaConfig).use(VueApexCharts)
+import { createI18n } from 'vue-i18n'
+
+const i18n = createI18n({
+    locale: 'en', // set locale
+    fallbackLocale: 'zh', // set fallback locale
+    // messages, // set locale messages
+    // If you need to specify other options, you can set other options
+    // ...
+})
+
+createApp(App).use(router).use(Oruga, bulmaConfig).use(VueApexCharts).use(i18n)
     .component('vue-navigation-bar', VueNavigationBar).mount('#app')
 
 

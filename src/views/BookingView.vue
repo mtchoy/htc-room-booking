@@ -1,9 +1,14 @@
 <script setup>
 // import HelloWorld from '../components/HelloWorld.vue'
-
-import { ref, computed, watch, onMounted, nextTick } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n'
 import print from 'vue3-print-nb'
+
+const { t, locale } = useI18n({
+    inheritLocale: true,
+    useScope: 'local'
+})
 
 const vPrint = print;
 
@@ -48,7 +53,7 @@ const minTime = ref(min);
 const maxTime = ref(max);
 const hourFormat = ref("24"); // Browser locale
 const enableSeconds = ref(false);
-const locale = ref(undefined); // Browser locale
+// const locale = ref(undefined); // Browser locale
 const minutesGranularity = ref(5);
 
 const labelPosition = ref("0");
@@ -58,7 +63,6 @@ const isImageModalActive = ref(false);
 
 // const isReading = ref("<%= action %>" == "read");
 const isReading = ref(id ? true : false);
-const isPrinting = ref(false);
 const canBook = ref("<%= (!req.session.canBook) %>" == "false");
 const canReview = ref(true);
 const canApprove = ref("<%= (!req.session.canApprove) %>" == "false");
@@ -247,7 +251,8 @@ const withdraw = function () {
 }
 
 const printpdf = async function () {
-    isPrinting.value = true;
+    locale.value = 'zh'
+
     // await nextTick();
 
     // printJS({
@@ -260,8 +265,6 @@ const printpdf = async function () {
     //     style: "* { color-adjust: exact; -webkit-print-color-adjust: exact; }",
     //     documentTitle: "Room Booking System #" + id
     // });
-
-    // isPrinting.value = false;
 };
 
 const printLoading = ref(true);
@@ -280,7 +283,7 @@ const printObj = {
         // console.log('执行了打印')
     },
     closeCallback(vue) {
-        isPrinting.value = false;
+        locale.value = "en"
         // console.log('关闭了打印工具')
     }
 };
@@ -333,24 +336,24 @@ onMounted(() => {
         <div class="column is-half">
             <div class="columns is-multiline">
 
-                <o-field class="column is-half" :label="isPrinting ? '課室' : 'Room'">
+                <o-field class="column is-half" :label="t('message.room')">
                     <o-select placeholder="Select a room" v-model="booking.room" v-if="!isReading" required>
                         <option v-for="option in rooms" :value="option" :key="option">
                             {{ option }}
                         </option>
                     </o-select>
-                    <o-input v-model="selectedRoom.name" v-if="isReading && !isPrinting" readonly></o-input>
-                    <o-input v-model="selectedRoom.zhname" v-if="isPrinting" readonly></o-input>
+                    <o-input v-model="selectedRoom.name" v-if="isReading && locale=='en'" readonly></o-input>
+                    <o-input v-model="selectedRoom.zhname" v-if="locale=='zh'" readonly></o-input>
                 </o-field>
 
-                <o-field class="column is-half" :label="isPrinting ? '日期' : 'Select a date'">
+                <o-field class="column is-half" :label="t('message.date')">
                     <o-datepicker placeholder="Click to select..." :min-date="minDate" :max-date="maxDate" locale="en-CA"
                         v-model="booking.date" v-if="!isReading" editable icon="calendar-today" required>
                     </o-datepicker>
                     <o-input v-model="booking.date" v-if="isReading" readonly></o-input>
                 </o-field>
 
-                <o-field class="column is-half" :label="isPrinting ? '開始時間' : 'Start time'">
+                <o-field class="column is-half" :label="t('message.startTime')">
                     <o-timepicker rounded placeholder="Click to select..." icon="clock" :enable-seconds="enableSeconds"
                         :hour-format="hourFormat" :locale="locale" :increment-minutes="minutesGranularity"
                         v-model="booking.startTime" v-if="!isReading" :min-time="minTime" :max-time="maxTime"
@@ -360,7 +363,7 @@ onMounted(() => {
                     </o-input>
                 </o-field>
 
-                <o-field class="column is-half" :label="isPrinting ? '結束時間' : 'End time'">
+                <o-field class="column is-half" :label="t('message.endTime')">
                     <o-timepicker rounded placeholder="Click to select..." icon="clock" :enable-seconds="enableSeconds"
                         :hour-format="hourFormat" :locale="locale" :increment-minutes="minutesGranularity"
                         v-model="booking.endTime" v-if="!isReading" :min-time="minTime" :max-time="maxTime"
@@ -370,7 +373,7 @@ onMounted(() => {
                     </o-input>
                 </o-field>
 
-                <o-field :label="isPrinting ? '預留形式' : 'Recurrent'" class="column">
+                <o-field :label="t('message.recurrent')" class="column">
                     <o-radio v-model="booking.recurrent" native-value="0" v-if="!isReading">
                         <o-icon icon="calendar-today"></o-icon>
                         <span>One time</span>
@@ -385,38 +388,38 @@ onMounted(() => {
                         <o-icon icon="calendar-week-begin"></o-icon>
                         <span>Weekly</span>
                     </o-radio>
-                    <o-input v-model="booking.recurrent" v-if="isReading && !isPrinting" readonly>
+                    <o-input v-model="booking.recurrent" v-if="isReading && locale=='en'" readonly>
                     </o-input>
-                    <o-input v-model="zhRecurrent" v-if="isPrinting" readonly>
+                    <o-input v-model="zhRecurrent" v-if="locale=='zh'" readonly>
                     </o-input>
                 </o-field>
 
-                <o-field class="column" :label="isPrinting ? '次數' : 'Number of Times'">
+                <o-field class="column" :label="t('message.repeatedTimes')">
                     <o-input type="number" controls-position="compact" controls-rounded v-model="booking.repeatedTimes"
                         placeholder="1" :min="1" max="99" :disabled="booking.recurrent == 'once'" v-if="!isReading">
                     </o-input>
                     <o-input v-model="booking.repeatedTimes" v-if="isReading" readonly></o-input>
                 </o-field>
 
-                <o-field class="column is-full" :label="isPrinting ? '學會/班級名稱' : 'User / Organization'">
+                <o-field class="column is-full" :label="t('message.user')">
                     <o-input placeholder="No label" rounded v-model="booking.user" :readonly="isReading" maxlength="70"
                         :use-html5-validation="true" required>
                     </o-input>
                 </o-field>
 
-                <o-field class="column is-half" :label="isPrinting ? '負責老師' : 'Teacher In Charge:'">
+                <o-field class="column is-half" :label="t('message.teacher')">
                     <o-input placeholder="No label" rounded v-model="booking.teacher" :readonly="isReading">
                     </o-input>
                 </o-field>
 
-                <o-field class="column is-half" :label="isPrinting ? '總共學生人數' : 'No. of People'">
+                <o-field class="column is-half" :label="t('message.numOfPeople')">
                     <o-input type="number" controls-position="compact" controls-rounded v-model="booking.numOfPeople"
                         placeholder="1" :min="1" v-if="!isReading">
                     </o-input>
                     <o-input v-model="booking.numOfPeople" v-if="isReading" readonly></o-input>
                 </o-field>
 
-                <o-field class="column" :label="isPrinting ? '用途' : 'Purpose'" :label-position="labelPosition">
+                <o-field class="column" :label="t('message.purpose')" :label-position="labelPosition">
                     <o-input maxlength="200" type="textarea" v-model="booking.purpose" :readonly="isReading">
                     </o-input>
                 </o-field>
@@ -427,7 +430,7 @@ onMounted(() => {
 
             <div class="columns is-multiline">
 
-                <o-field class="column is-one-third-tablet" :label="isPrinting ? '無線咪' : 'Wireless Mic'">
+                <o-field class="column is-one-third-tablet" :label="t('message.wirelessMic')">
                     <o-input type="number" controls-position="compact" controls-rounded v-model="booking.wirelessMic"
                         placeholder="0" :min="0" :max="selectedRoom.WirelessMic" v-if="!isReading"
                         :disabled="!selectedRoom.WirelessMic">
@@ -435,7 +438,7 @@ onMounted(() => {
                     <o-input v-model="booking.wirelessMic" v-if="isReading" readonly></o-input>
                 </o-field>
 
-                <o-field class="column is-half-tablet" :label="isPrinting ? '咪STAND' : 'Microphone Stand'">
+                <o-field class="column is-half-tablet" :label="t('message.microphoneStand')">
                     <o-input type="number" controls-position="compact" controls-rounded v-model="booking.microphoneStand"
                         placeholder="0" :min="0" :max="selectedRoom.MicrophoneStand" v-if="!isReading"
                         :disabled="!selectedRoom.MicrophoneStand">
@@ -443,7 +446,7 @@ onMounted(() => {
                     <o-input v-model="booking.microphoneStand" v-if="isReading" readonly></o-input>
                 </o-field>
 
-                <o-field class="column is-one-third-tablet" :label="isPrinting ? '長枱數量' : 'Long Tables'">
+                <o-field class="column is-one-third-tablet" :label="t('message.longTables')">
                     <o-input type="number" controls-position="compact" controls-rounded v-model="booking.longTables"
                         placeholder="0" :min="0" :max="selectedRoom.LongTables" v-if="!isReading"
                         :disabled="!selectedRoom.LongTables">
@@ -451,7 +454,7 @@ onMounted(() => {
                     <o-input v-model="booking.longTables" v-if="isReading" readonly></o-input>
                 </o-field>
 
-                <o-field class="column is-one-third-tablet" :label="isPrinting ? '椅子數量' : 'Chairs'">
+                <o-field class="column is-one-third-tablet" :label="t('message.chairs')">
                     <o-input type="number" controls-position="compact" controls-rounded v-model="booking.chairs"
                         placeholder="0" :min="0" :max="selectedRoom.Chairs" v-if="!isReading"
                         :disabled="!selectedRoom.Chairs">
@@ -459,7 +462,7 @@ onMounted(() => {
                     <o-input v-model="booking.chairs" v-if="isReading" readonly></o-input>
                 </o-field>
 
-                <o-field class="column is-one-third-tablet" :label="isPrinting ? '合唱團椅' : 'Choir Chairs'">
+                <o-field class="column is-one-third-tablet" :label="t('message.ChoirChairs')">
                     <o-input type="number" controls-position="compact" controls-rounded v-model="booking.choirChairs"
                         placeholder="0" :min="0" :max="selectedRoom.ChoirChairs" v-if="!isReading"
                         :disabled="!selectedRoom.ChoirChairs">
@@ -470,7 +473,7 @@ onMounted(() => {
 
             <div class="columns is-multiline">
 
-                <div class="column is-three-fifths-widescreen is-full-tablet" v-if="!isReading && !isPrinting">
+                <div class="column is-three-fifths-widescreen is-full-tablet" v-if="!isReading && locale=='en'">
                     <o-field>
                         <o-upload v-model="dropFile" drag-drop @input="fileChanged">
                             <section class="section">
@@ -495,7 +498,7 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <div class="column is-three-fifths-widescreen is-full-tablet" v-if="isReading && !isPrinting">
+                <div class="column is-three-fifths-widescreen is-full-tablet" v-if="isReading && locale=='en'">
                     <div class="buttons">
                         <o-button label="See Floor Plan" type="is-primary" size="is-medium"
                             @click="isImageModalActive = true" :disabled="!booking.fd">
@@ -503,10 +506,10 @@ onMounted(() => {
                     </div>
 
                     <!-- <figure class="image is-5by2">
-                                                                                                                            <img :src="booking.preSignedURL" @click="isImageModalActive = true"
-                                                                                                                                v-if="booking.preSignedURL" />
-                                                                                                                            <o-skeleton height="180px" v-if="!booking.preSignedURL"></o-skeleton>
-                                                                                                                        </figure> -->
+                                                            <img :src="booking.preSignedURL" @click="isImageModalActive = true"
+                                                                v-if="booking.preSignedURL" />
+                                                            <o-skeleton height="180px" v-if="!booking.preSignedURL"></o-skeleton>
+                                                        </figure> -->
 
                     <o-modal v-model="isImageModalActive">
                         <p class="image">
@@ -518,11 +521,11 @@ onMounted(() => {
                 <div class="column is-two-fifths-widescreen is-full-tablet">
                     <o-checkbox v-model="booking.equipments" native-value="notebookComputer"
                         :disabled="!selectedRoom.NotebookComputer || isReading">
-                        {{ isPrinting ? '電腦' : 'Notebook Computer' }}
+                        {{ t('message.notebookComputer') }}
                     </o-checkbox>
                     <o-checkbox v-model="booking.equipments" native-value="LCDProjectorScreen"
                         :disabled="!selectedRoom.LCDProjectorScreen || isReading">
-                        {{ isPrinting ? '投影器 及 幕' : 'LCD Projector & Screen' }}
+                        {{ t('message.LCDProjectorScreen') }}
                     </o-checkbox>
                     <o-checkbox v-model="booking.equipments" native-value="wifi"
                         :disabled="!selectedRoom.WiFi || isReading">
@@ -538,11 +541,11 @@ onMounted(() => {
                     </o-checkbox>
                     <o-checkbox v-model="booking.equipments" native-value="pianoMic"
                         :disabled="!selectedRoom.pianoMic || isReading">
-                        {{ isPrinting ? '鋼琴咪' : 'Piano Mic' }}
+                        {{ t('message.pianoMic') }}
                     </o-checkbox>
                     <o-checkbox v-model="booking.equipments" native-value="portableAmplifier"
                         :disabled="!selectedRoom.PortableAmplifier || isReading">
-                        {{ isPrinting ? '擴音器' : 'Portable Amplifier ' }}
+                        {{ t('message.portableAmplifier') }}
                     </o-checkbox>
                     <o-checkbox v-model="booking.equipments" native-value="cameraPhotoTaking"
                         :disabled="!selectedRoom.CameraPhotoTaking || isReading">
@@ -558,17 +561,17 @@ onMounted(() => {
                     </o-checkbox>
                     <o-checkbox v-model="booking.equipments" native-value="rubbishBin"
                         :disabled="!selectedRoom.RubbishBin || isReading">
-                        {{ isPrinting ? '垃圾桶' : 'Rubbish Bin' }}
+                        {{ t('message.rubbishBin') }}
                     </o-checkbox>
                 </div>
 
             </div>
 
-            <o-field class="is-full" :label="isPrinting ? '註記' : 'Remarks'" :label-position="labelPosition">
+            <o-field class="is-full" :label="t('message.remarks')" :label-position="labelPosition">
                 <o-input maxlength="200" type="textarea" v-model="booking.remarks"></o-input>
             </o-field>
 
-            <div class="field" v-if="!isPrinting">
+            <div class="field" v-if="locale=='en'">
                 <div class="control">
                     <button class="button is-link" type="submit" v-if="!isReading">Submit</button>
                     <button class="button is-link is-warning" type="button" @click="withdraw"
@@ -588,7 +591,7 @@ onMounted(() => {
     <button @click="printpdf()" v-print="printObj">Print local range</button>
     <div id="loading" v-show="printLoading"></div>
 
-    <div class="container" v-if="isPrinting && booking.preSignedURL">
+    <div class="container" v-if="locale=='zh' && booking.preSignedURL">
         <img :src="booking.preSignedURL" />
     </div>
 </template>
@@ -620,3 +623,58 @@ onMounted(() => {
     background: #ffdd57;
 }
 </style>
+
+<i18n>
+{
+    "en": {
+        "message": {
+            "room": 'Room',
+            "date": 'Select a date',
+            "startTime": 'Start Time',
+            "endTime": 'End Time',
+            "recurrent": 'Recurrent',
+            "repeatedTimes": 'Number of times',
+            "user" : "User / Organization",
+            "teacher" : "Teacher In Charge",
+            "numOfPeople": 'Number of People',
+            "purpose": 'Purpose',
+            "wirelessMic": "Wireless Mic",
+            "microphoneStand": "Microphone Stand",
+            "longTables": "Long Tables",
+            "chairs": "Chairs",
+            "ChoirChairs": "Choir Chairs",
+            "notebookComputer": 'Notebook Computer',
+            "LCDProjectorScreen": 'LCD Projector & Screen',
+            "pianoMic": 'Piano Mic',
+            "portableAmplifier": 'Portable Amplifier',
+            "rubbishBin": 'Rubbish Bin',
+            "remarks": 'Remarks',
+        }
+    },
+    "zh": {
+        "message": {
+            "room": '課室',
+            "date": '日期',
+            "startTime": '開始時間',
+            "endTime": '結束時間',
+            "recurrent": '預留形式',
+            "repeatedTimes": '次數',
+            "user" :" 使用者 / 組織",
+            "teacher" : "負責老師",
+            "numOfPeople": '總共學生人數',
+            "purpose": '用途',
+            "wirelessMic": '無線咪',
+            "microphoneStand": '咪STAND',
+            "longTables": '長枱數量', 
+            "chairs": '椅子數量',
+            "ChoirChairs": "合唱團椅",
+            "notebookComputer": '電腦',
+            "LCDProjectorScreen": '投影器 及 幕', 
+            "pianoMic": '鋼琴咪',
+            "portableAmplifier": '擴音器',
+            "rubbishBin": '垃圾桶',
+            "remarks": '註記',
+        }
+    }
+}
+</i18n>
