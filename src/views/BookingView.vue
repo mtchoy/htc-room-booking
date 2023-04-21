@@ -60,7 +60,6 @@ const labelPosition = ref("0");
 const dropFile = ref(null);
 const isImageModalActive = ref(false);
 
-
 // const isReading = ref("<%= action %>" == "read");
 const isReading = ref(id ? true : false);
 const canBook = ref("<%= (!req.session.canBook) %>" == "false");
@@ -91,14 +90,6 @@ watch(() => booking.value.room, async () => {
     }
 });
 
-const zhRecurrent = computed(() => {
-
-    switch (booking.value.recurrent) {
-        case 'once': return "一次";
-        case 'daily': return "每天";
-        case 'weekly': return "每周";
-    }
-});
 
 const submitForm = async function () {
 
@@ -151,6 +142,8 @@ const fetchThisBooking = async function () {
             result.date = new Date(result.date)
             result.startTime = new Date(result.startTime)
             result.endTime = new Date(result.endTime)
+
+            result.recurrent = t('once')
         }
 
         booking.value = result;
@@ -250,23 +243,6 @@ const withdraw = function () {
     })
 }
 
-const printpdf = async function () {
-    locale.value = 'zh'
-
-    // await nextTick();
-
-    // printJS({
-    //     printable: 'app', type: 'html', scanStyles: true,
-    //     // css: ["https://unpkg.com/buefy/dist/buefy.min.css",
-    //     //     "https://cdn.jsdelivr.net/npm/@mdi/font@5.8.55/css/materialdesignicons.min.css"],
-    //     css: ["/node_modules/bulma/css/bulma.min.css",
-    //         "/node_modules/@mdi/font/css/materialdesignicons.min.css"],
-    //     // style: ".o-checkbox.checkbox input[type=checkbox]:checked+.check:before { content: '✔️';}",
-    //     style: "* { color-adjust: exact; -webkit-print-color-adjust: exact; }",
-    //     documentTitle: "Room Booking System #" + id
-    // });
-};
-
 const printLoading = ref(true);
 
 const printObj = {
@@ -286,6 +262,17 @@ const printObj = {
         locale.value = "en"
         // console.log('关闭了打印工具')
     }
+
+    // printJS({
+    //     printable: 'app', type: 'html', scanStyles: true,
+    //     // css: ["https://unpkg.com/buefy/dist/buefy.min.css",
+    //     //     "https://cdn.jsdelivr.net/npm/@mdi/font@5.8.55/css/materialdesignicons.min.css"],
+    //     css: ["/node_modules/bulma/css/bulma.min.css",
+    //         "/node_modules/@mdi/font/css/materialdesignicons.min.css"],
+    //     // style: ".o-checkbox.checkbox input[type=checkbox]:checked+.check:before { content: '✔️';}",
+    //     style: "* { color-adjust: exact; -webkit-print-color-adjust: exact; }",
+    //     documentTitle: "Room Booking System #" + id
+    // });
 };
 
 const validate = function () {
@@ -342,8 +329,8 @@ onMounted(() => {
                             {{ option }}
                         </option>
                     </o-select>
-                    <o-input v-model="selectedRoom.name" v-if="isReading && locale=='en'" readonly></o-input>
-                    <o-input v-model="selectedRoom.zhname" v-if="locale=='zh'" readonly></o-input>
+                    <o-input v-model="selectedRoom.name" v-if="isReading && locale == 'en'" readonly></o-input>
+                    <o-input v-model="selectedRoom.zhname" v-if="locale == 'zh'" readonly></o-input>
                 </o-field>
 
                 <o-field class="column is-half" :label="t('message.date')">
@@ -376,22 +363,22 @@ onMounted(() => {
                 <o-field :label="t('message.recurrent')" class="column">
                     <o-radio v-model="booking.recurrent" native-value="0" v-if="!isReading">
                         <o-icon icon="calendar-today"></o-icon>
-                        <span>One time</span>
+                        <span>{{ t('message.once') }}</span>
                     </o-radio>
 
                     <o-radio v-model="booking.recurrent" native-value="1" v-if="!isReading">
                         <o-icon icon="calendar-week"></o-icon>
-                        <span>Daily</span>
+                        <span>{{ t('message.daily') }}</span>
                     </o-radio>
 
                     <o-radio v-model="booking.recurrent" native-value="7" v-if="!isReading">
                         <o-icon icon="calendar-week-begin"></o-icon>
-                        <span>Weekly</span>
+                        <span>{{ t('message.weekly') }}</span>
                     </o-radio>
-                    <o-input v-model="booking.recurrent" v-if="isReading && locale=='en'" readonly>
+                    <o-input v-model="booking.recurrent" v-if="isReading" readonly>
                     </o-input>
-                    <o-input v-model="zhRecurrent" v-if="locale=='zh'" readonly>
-                    </o-input>
+                    <!-- <o-input v-model="zhRecurrent" v-if="locale == 'zh'" readonly>
+                    </o-input> -->
                 </o-field>
 
                 <o-field class="column" :label="t('message.repeatedTimes')">
@@ -473,7 +460,7 @@ onMounted(() => {
 
             <div class="columns is-multiline">
 
-                <div class="column is-three-fifths-widescreen is-full-tablet" v-if="!isReading && locale=='en'">
+                <div class="column is-three-fifths-widescreen is-full-tablet" v-if="!isReading && locale == 'en'">
                     <o-field>
                         <o-upload v-model="dropFile" drag-drop @input="fileChanged">
                             <section class="section">
@@ -498,7 +485,7 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <div class="column is-three-fifths-widescreen is-full-tablet" v-if="isReading && locale=='en'">
+                <div class="column is-three-fifths-widescreen is-full-tablet" v-if="isReading && locale == 'en'">
                     <div class="buttons">
                         <o-button label="See Floor Plan" type="is-primary" size="is-medium"
                             @click="isImageModalActive = true" :disabled="!booking.fd">
@@ -506,10 +493,10 @@ onMounted(() => {
                     </div>
 
                     <!-- <figure class="image is-5by2">
-                                                            <img :src="booking.preSignedURL" @click="isImageModalActive = true"
-                                                                v-if="booking.preSignedURL" />
-                                                            <o-skeleton height="180px" v-if="!booking.preSignedURL"></o-skeleton>
-                                                        </figure> -->
+                                                                    <img :src="booking.preSignedURL" @click="isImageModalActive = true"
+                                                                        v-if="booking.preSignedURL" />
+                                                                    <o-skeleton height="180px" v-if="!booking.preSignedURL"></o-skeleton>
+                                                                </figure> -->
 
                     <o-modal v-model="isImageModalActive">
                         <p class="image">
@@ -571,7 +558,7 @@ onMounted(() => {
                 <o-input maxlength="200" type="textarea" v-model="booking.remarks"></o-input>
             </o-field>
 
-            <div class="field" v-if="locale=='en'">
+            <div class="field" v-if="locale == 'en'">
                 <div class="control">
                     <button class="button is-link" type="submit" v-if="!isReading">Submit</button>
                     <button class="button is-link is-warning" type="button" @click="withdraw"
@@ -580,18 +567,17 @@ onMounted(() => {
                         v-if="isReading && canApprove && booking.status != 'Approved'">Approve</button>
                     <button class="button is-link is-danger" type="button" @click="changeStatus('Rejected')"
                         v-if="isReading && canApprove && booking.status != 'Rejected'">Reject</button>
-                    <button class="button is-dark" type="button" @click="printpdf"
-                        v-if="isReading && canReview">Print</button>
+                    <button class="button is-dark" type="button" @click="" v-if="isReading && canReview">Print</button>
                 </div>
             </div>
 
         </div>
     </form>
 
-    <button @click="printpdf()" v-print="printObj">Print local range</button>
+    <button @click="locale = 'zh'" v-print="printObj">Print local range</button>
     <div id="loading" v-show="printLoading"></div>
 
-    <div class="container" v-if="locale=='zh' && booking.preSignedURL">
+    <div class="container" v-if="locale == 'zh' && booking.preSignedURL">
         <img :src="booking.preSignedURL" />
     </div>
 </template>
@@ -649,6 +635,9 @@ onMounted(() => {
             "portableAmplifier": 'Portable Amplifier',
             "rubbishBin": 'Rubbish Bin',
             "remarks": 'Remarks',
+            "once": "once",
+            "daily": "daily",
+            "weekly": "weekly"
         }
     },
     "zh": {
@@ -674,6 +663,9 @@ onMounted(() => {
             "portableAmplifier": '擴音器',
             "rubbishBin": '垃圾桶',
             "remarks": '註記',
+            "once": "一次",
+            "daily": "每日",
+            "weekly": "每週",
         }
     }
 }
