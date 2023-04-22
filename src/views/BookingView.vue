@@ -1,40 +1,21 @@
 <script setup>
 // import HelloWorld from '../components/HelloWorld.vue'
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import { addBusinessDays, addYears, setHours, formatISO9075 } from 'date-fns'
 import { useI18n } from 'vue-i18n'
-import print from 'vue3-print-nb'
+import vPrint from 'vue3-print-nb'
 
 const { t, locale } = useI18n({
     inheritLocale: true,
     useScope: 'local'
 })
 
-const vPrint = print;
-
-const today = new Date();
-
-function nextWorkingDay(date) {
-    date.setDate(date.getDate() + +"1111132"[date.getDay()]);
-}
-
-var afterTwoWorkingDays = new Date(new Date().setHours(0, 0, 0, 0));
-nextWorkingDay(afterTwoWorkingDays);
-nextWorkingDay(afterTwoWorkingDays);
-nextWorkingDay(afterTwoWorkingDays);
-
-const min = new Date();
-min.setHours(7);
-min.setMinutes(0);
-const max = new Date();
-max.setHours(18);
-max.setMinutes(0);
-
 const route = useRoute()
 const id = route.params.id;
 
 const booking = ref({
-    date: afterTwoWorkingDays,
+    date: addBusinessDays(new Date(), 2),
     equipments: [],
     recurrent: 0,
     repeatedTimes: 1,
@@ -46,11 +27,11 @@ const booking = ref({
 });
 
 const rooms = ref(JSON.parse(localStorage.getItem("rooms") || []));
-const date = ref(new Date(new Date().setHours(0, 0, 0, 0)));
-const minDate = ref(afterTwoWorkingDays);
-const maxDate = ref(new Date(today.getFullYear() + 2, today.getMonth(), today.getDate()));
-const minTime = ref(min);
-const maxTime = ref(max);
+// const date = ref(new Date(new Date().setHours(0, 0, 0, 0)));
+const minDate = ref(addBusinessDays(new Date(), 2));
+const maxDate = ref(addYears(new Date(), 2));
+const minTime = ref(setHours(new Date(), 7));
+const maxTime = ref(setHours(new Date(), 18));
 const hourFormat = ref("24"); // Browser locale
 const enableSeconds = ref(false);
 // const locale = ref(undefined); // Browser locale
@@ -62,7 +43,7 @@ const isImageModalActive = ref(false);
 
 // const isReading = ref("<%= action %>" == "read");
 const isReading = ref(id ? true : false);
-const canBook = ref("<%= (!req.session.canBook) %>" == "false");
+// const canBook = ref("<%= (!req.session.canBook) %>" == "false");
 const canReview = ref(true);
 const canApprove = ref("<%= (!req.session.canApprove) %>" == "false");
 const selectedRoom = ref({})
@@ -90,15 +71,12 @@ watch(() => booking.value.room, async () => {
     }
 });
 
-
 const submitForm = async function () {
 
-    if (!validate()) return;
-
     var postData = booking.value;
-    postData.date = new Date(postData.date).toLocaleDateString('en-CA');
-    postData.startTime = new Date(postData.startTime).toLocaleTimeString('en-CA', { hour12: false, hour: '2-digit', minute: '2-digit' });
-    postData.endTime = new Date(postData.endTime).toLocaleTimeString('en-CA', { hour12: false, hour: '2-digit', minute: '2-digit' });
+    postDate.date = formatISO9075(postDate.date, { representation: 'date' })
+    postData.startTime = formatISO9075(postData.startTime, { representation: 'time' })
+    postData.endTime = formatISO9075(postData.endTime, { representation: 'time' })
 
     var response = await fetch("/booking", {
         method: "post",
@@ -275,42 +253,6 @@ const printObj = {
     // });
 };
 
-const validate = function () {
-    if (!this.canApprove && !this.booking.teacher) {
-        this.$buefy.snackbar.open(`No Teaching in Charge`)
-        return false
-    }
-
-    if (!this.canApprove && this.booking.date < afterTwoWorkingDays) {
-        this.$buefy.snackbar.open(`Need two working days for approval`)
-        return false;
-    }
-
-    var now = new Date();
-    var time = "07:00 AM";
-    var dt = (now.getMonth() + 1) + "/" + now.getDate() + "/" + now.getFullYear() + " " + time;
-
-    if (this.booking.startTime.getTime() < new Date(dt).getTime()) {
-        this.$buefy.snackbar.open(`Start Time too early`)
-        return false
-    }
-
-    var time = "06:00 PM";
-    var dt = (now.getMonth() + 1) + "/" + now.getDate() + "/" + now.getFullYear() + " " + time;
-
-    if (this.booking.endTime.getTime() > new Date(dt).getTime()) {
-        this.$buefy.snackbar.open(`End Time too late`)
-        return false
-    }
-
-    if (this.booking.endTime < this.booking.startTime) {
-        this.$buefy.snackbar.open(`End Time before Start Time.`)
-        return false
-    }
-
-    return true;
-}
-
 onMounted(() => {
     if (isReading.value) {
         fetchThisBooking();
@@ -378,7 +320,7 @@ onMounted(() => {
                     <o-input v-model="booking.recurrent" v-if="isReading" readonly>
                     </o-input>
                     <!-- <o-input v-model="zhRecurrent" v-if="locale == 'zh'" readonly>
-                    </o-input> -->
+                                                                </o-input> -->
                 </o-field>
 
                 <o-field class="column" :label="t('message.repeatedTimes')">
@@ -493,10 +435,10 @@ onMounted(() => {
                     </div>
 
                     <!-- <figure class="image is-5by2">
-                                                                    <img :src="booking.preSignedURL" @click="isImageModalActive = true"
-                                                                        v-if="booking.preSignedURL" />
-                                                                    <o-skeleton height="180px" v-if="!booking.preSignedURL"></o-skeleton>
-                                                                </figure> -->
+                        <img :src="booking.preSignedURL" @click="isImageModalActive = true"
+                            v-if="booking.preSignedURL" />
+                        <o-skeleton height="180px" v-if="!booking.preSignedURL"></o-skeleton>
+                    </figure> -->
 
                     <o-modal v-model="isImageModalActive">
                         <p class="image">
