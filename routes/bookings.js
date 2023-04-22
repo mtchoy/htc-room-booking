@@ -1,13 +1,14 @@
 var express = require('express');
 var router = express.Router();
 
+const { addBusinessDays, formatISO9075, addDays } = require('date-fns')
 // const checkToken = require('../middlewares/checkToken');
 const { connectToDB, ObjectId } = require('../utils/db');
 const { sendEmail } = require('../utils/send-email');
 
 // Create new booking item
 router.post('/', async (req, res) => {
-    const { room, date, startTime, endTime, user, recurrent, repeatedTimes } = req.body;
+    const { room, date, startTime, endTime, user, teacher, recurrent, repeatedTimes } = req.body;
 
     if (!(room && date && startTime && endTime && user))
         return res.badRequest("Missing attribute(s).");
@@ -16,36 +17,60 @@ router.post('/', async (req, res) => {
         return res.badRequest("Invalid recurrent value.");
     }
 
+    if (!teacher && !req.user.canApprove) {
+        return res.badRequest("No Teaching in Charge.");
+    }
+
+    if (startTime < "07:00:00") {
+        return res.badRequest("Start Time too early.");
+    }
+
+    if (endTime > "18:00:00") {
+        return res.badRequest("End Time too late.");
+    }
+
+    if (endTime < startTime) {
+        return res.badRequest("End Time before Start Time.");
+    }
+
+    if (date < formatISO9075(addBusinessDays(new Date(), 2), { representation: 'date' }) && !req.user.canApprove) {
+        return res.badRequest("Need two working days for approval.");
+    }
+
     var rT = 1;
     if (recurrent != 0) rT = parseInt(repeatedTimes) || 1;
 
-    var nextDay = parseInt(recurrent) || 0;
+    var daysToAdd = parseInt(recurrent) || 0;
 
-    var qStartTime = new Date(date + " " + startTime);
-    var qEndTime = new Date(date + " " + endTime);
+    var slotStart = new Date(date + " " + startTime);
+    var slotEnd = new Date(date + " " + endTime);
 
     var timeslots = [];
+    var queries = [];
+
+    for (var i = 0; i < rT; i++) {
+
+        queries.push(
+            { startTime: { $lt: slotStart }, endTime: { $gt: slotStart } },
+            { startTime: { $lt: slotEnd }, endTime: { $gt: slotEnd } },
+            { startTime: { $gt: slotStart }, endTime: { $lt: slotEnd } }
+        )
+
+        timeslots.push({ startTime: slotStart, endTime: slotEnd });
+
+        slotStart = addDays(slotStart, daysToAdd);
+        slotEnd = addDays(slotEnd, daysToAdd);
+    }
 
     const db = await connectToDB();
     try {
-        for (var i = 0; i < rT; i++) {
-            matched = await db.collection('timeslot').findOne({
-                room: room,
-                status: { $in: ["Pending", "Approved"] },
-                $or: [
-                    { startTime: { $lt: qStartTime }, endTime: { $gt: qStartTime } },
-                    { startTime: { $lt: qEndTime }, endTime: { $gt: qEndTime } },
-                    { startTime: { $gt: qStartTime }, endTime: { $lt: qEndTime } }
-                ]
-            });
+        var matched = await db.collection('timeslot').findOne({
+            room: room,
+            status: { $in: ["Pending", "Approved"] },
+            $or: queries
+        });
 
-            if (matched) return res.status(409).json({ message: 'Timeslot is not available' });
-
-            timeslots.push({ startTime: new Date(qStartTime), endTime: new Date(qEndTime) });
-
-            qStartTime.setDate(qStartTime.getDate() + nextDay);
-            qEndTime.setDate(qEndTime.getDate() + nextDay);
-        }
+        if (matched) return res.status(409).json({ message: 'At least one timeslot is not available.' });
 
         if (req.user.canApprove || (room == "Rm514" && !/^s\d{6}$/.test(req.user.username.toLowerCase())))
             req.body.status = "Approved";
