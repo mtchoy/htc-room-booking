@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, watch, toRaw } from 'vue'
 import { useRouter } from 'vue-router'
+import { addDays, addHours, addMinutes, startOfMonth, startOfDay, formatISO9075 } from 'date-fns'
 
 const props = defineProps({
     date: Date,
@@ -21,7 +22,7 @@ const options = ref({
     xaxis: {
         type: 'datetime',
         labels: {
-            format: 'HH:mm',
+            format: 'HH:mm'
         }
     },
     legend: {
@@ -65,39 +66,48 @@ const series = ref([{
 
 const buildChart = async () => {
 
-    var open = props.date.getTime() + 28800000 + 25200000;   // UTC+8 and 7am
-    var close = open + 39600000;    // 11 hours
+    // var open = props.date.getTime() + 28800000 + 25200000;   // UTC+8 and 7am
+    // var open = addHours(props.date, 7); // UTC+8 and 7am
 
+    // var close = open + 39600000;    // 11 hours
+
+    // var open = props.date;
     var hiddenGroup = [];
 
     if (props.room) {
+        var start = startOfMonth(props.date)
+        var next = new Date(start)
         for (var i = 0; i < 31; i++) {
-            hiddenGroup.push({ x: new Date(new Date(open).getTime() + i * 86400000).toDateString() });
+            hiddenGroup.push({ x: next.toDateString() });
+            next = addDays(next, 1);
         }
     } else {
+        var start = startOfDay(props.date)
         const rooms = JSON.parse(localStorage.getItem("rooms"));
         hiddenGroup = rooms.map(room => ({ x: room }))
     }
 
-    await fetchSlots(hiddenGroup);
+    await fetchSlots(formatISO9075(start, { representation: 'date' }), hiddenGroup);
 
     options.value = {
         ...options.value, ...{
             xaxis: {
                 ...options.value.xaxis, ...{
-                    min: open - 288000,
-                    max: close + 288000,
+                    min: addMinutes(addHours(start, 15), -5).getTime(),
+                    max: addMinutes(addHours(start, 26), 5).getTime()
+                    // addMinutes(open, -5).getTime(),
+                    // max: addMinutes(close, 5).getTime()
                 }
             }
         }
     };
 };
 
-const fetchSlots = async (hiddenGroup) => {
+const fetchSlots = async (startISOString, hiddenGroup) => {
 
     const roomParams = props.room ? `&room=${props.room}` : "";
 
-    var response = await fetch(`/api/timeslots?date=${props.date.toISOString()}${roomParams}`);
+    var response = await fetch(`/api/timeslots?date=${startISOString}${roomParams}`);
 
     if (response.ok) {
 
@@ -127,7 +137,11 @@ const fetchSlots = async (hiddenGroup) => {
                     data: slots.map(({ room, startTime, endTime, status, booking }) => ({
                         x: room,
                         y: [
+                            // new Date(startTime).getTime(),
+                            // new Date(endTime).getTime()
                             new Date(startTime).getTime() + 28800000,
+                            // addHours(startTime, 8).getTime(),
+                            // addHours(endTime, 8).getTime()
                             new Date(endTime).getTime() + 28800000
                         ],  // UTC+8
                         fillColor: status == "Pending" ? '#ffcc00' : (status == "Approved" ? '#42ba96' : '#000000'),
