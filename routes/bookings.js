@@ -42,8 +42,9 @@ router.post('/', async (req, res) => {
 
     var daysToAdd = parseInt(recurrent) || 0;
 
-    var slotStart = new Date(date + " " + startTime);
-    var slotEnd = new Date(date + " " + endTime);
+    var slotStart = new Date(`${date}T${startTime}+08:00`);
+    var slotEnd = new Date(`${date}T${endTime}+08:00`);
+    // var slotEnd = new Date(date + " " + endTime);
 
     var timeslots = [];
     var queries = [];

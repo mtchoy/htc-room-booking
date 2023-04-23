@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
+const { addDays } = require('date-fns')
 // const checkToken = require('../middlewares/checkToken');
 const { connectToDB, ObjectId } = require('../utils/db');
 
@@ -16,13 +17,14 @@ router.get('/', async (req, res) => {
 
     var startDate = new Date(date);
     const query = { startTime: { $gt: startDate } };
-    var endDate = new Date();
 
     if (room) {
         query.room = room;
-        endDate.setDate(startDate.getDate() + 31) // 31 days
+        var endDate = addDays(startDate, 31)
+        // endDate.setDate(startDate.getDate() + 31) // 31 days
     } else {
-        endDate.setDate(startDate.getDate() + 1) // 1 day
+        var endDate = addDays(startDate, 1)
+        // endDate.setDate(startDate.getDate() + 1) // 1 day
     }
 
     query.endTime = { $lt: endDate }
