@@ -4,6 +4,7 @@ import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { addBusinessDays, addYears, setHours, formatISO9075 } from 'date-fns'
 import { useI18n } from 'vue-i18n'
+import { useProgrammatic } from '@oruga-ui/oruga-next'
 import vPrint from 'vue3-print-nb'
 
 const { t, locale } = useI18n({
@@ -48,6 +49,8 @@ const canReview = ref(true);
 const canApprove = ref("<%= (!req.session.canApprove) %>" == "false");
 const selectedRoom = ref({})
 
+const { oruga } = useProgrammatic()
+
 watch(() => booking.value.room, async () => {
 
     if (!isReading.value) {
@@ -73,12 +76,12 @@ watch(() => booking.value.room, async () => {
 
 const submitForm = async function () {
 
-    var postData = booking.value;
+    var postData = { ...booking.value };
     postData.date = formatISO9075(postData.date, { representation: 'date' })
     postData.startTime = formatISO9075(postData.startTime, { representation: 'time' })
     postData.endTime = formatISO9075(postData.endTime, { representation: 'time' })
 
-    var response = await fetch("/booking", {
+    var response = await fetch("/api/bookings/", {
         method: "post",
         headers: {
             'Content-Type': 'application/json'
@@ -89,12 +92,12 @@ const submitForm = async function () {
     if (response.ok) {
         var text = await response.text();
 
-        $oruga.notification.open({
+        oruga.notification.open({
             message: text,
             variant: 'success',
             position: 'top',
             actionText: 'OK',
-            indefinite: true,
+            // indefinite: true,
             onAction: () => {
                 location.assign("/booking/listMine")
             }
