@@ -74,7 +74,7 @@ watch(() => booking.value.room, async () => {
 const submitForm = async function () {
 
     var postData = booking.value;
-    postDate.date = formatISO9075(postDate.date, { representation: 'date' })
+    postData.date = formatISO9075(postData.date, { representation: 'date' })
     postData.startTime = formatISO9075(postData.startTime, { representation: 'time' })
     postData.endTime = formatISO9075(postData.endTime, { representation: 'time' })
 
