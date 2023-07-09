@@ -5,9 +5,10 @@ const { addBusinessDays, formatISO9075, addDays } = require('date-fns')
 // const checkToken = require('../middlewares/checkToken');
 const { connectToDB, ObjectId } = require('../utils/db');
 const { sendEmail } = require('../utils/send-email');
+const verifyToken = require('../middlewares/verifyToken');
 
-// Create new booking item
-router.post('/', async (req, res) => {
+// Create new booking iteme
+router.post('/', verifyToken, async (req, res) => {
     const { room, date, startTime, endTime, user, teacher, recurrent, repeatedTimes } = req.body;
 
     if (!(room && date && startTime && endTime && user))
@@ -52,9 +53,9 @@ router.post('/', async (req, res) => {
     for (var i = 0; i < rT; i++) {
 
         queries.push(
-            { startTime: { $lt: slotStart }, endTime: { $gt: slotStart } },
-            { startTime: { $lt: slotEnd }, endTime: { $gt: slotEnd } },
-            { startTime: { $gt: slotStart }, endTime: { $lt: slotEnd } }
+            { startTime: { $lte: slotStart }, endTime: { $gte: slotStart } },
+            { startTime: { $lte: slotEnd }, endTime: { $gte: slotEnd } },
+            { startTime: { $gte: slotStart }, endTime: { $lte: slotEnd } }
         )
 
         timeslots.push({ startTime: slotStart, endTime: slotEnd });
@@ -62,6 +63,8 @@ router.post('/', async (req, res) => {
         slotStart = addDays(slotStart, daysToAdd);
         slotEnd = addDays(slotEnd, daysToAdd);
     }
+
+    console.log(queries)
 
     const db = await connectToDB();
     try {

@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/3ee00146-0e1e-446a-b6fb-d796f8d4283f/resourceGroups/Shared/providers/Microsoft.Web/sites/room-booking",
+    "appService.deploySubpath": "."
+}
