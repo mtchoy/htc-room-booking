@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const { uploadToAzure, downloadFromAzure } = require('../utils/storage-blob');
+const { uploadToAzure, getBlobSasUri } = require('../utils/storage-blob');
 const rooms = require('../utils/equipments.json');
 
 /* GET home page. */
@@ -9,10 +9,23 @@ router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.post('/upload', function (req, res) {
+router.post('/upload', async function (req, res) {
   console.log(req.files.foo); // the uploaded file object
-  uploadToAzure(req.files.foo);
-  res.send('File uploaded!')
+  const url = await uploadToAzure(req.files.foo);
+
+  console.log(url.split("/").pop().toLowerCase());
+
+  res.send(url.split("/").pop().toLowerCase());
+
+  // res.send('File uploaded!')
+});
+
+// Get Blob SAS URL
+router.get('/blob/:foo', async function (req, res) {
+
+  var response = await getBlobSasUri(req.params.foo);
+
+  res.send(response);
 });
 
 router.get('/rooms/:id', function (req, res) {

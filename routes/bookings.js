@@ -6,6 +6,7 @@ const { addBusinessDays, formatISO9075, addDays } = require('date-fns')
 const { connectToDB, ObjectId } = require('../utils/db');
 const { sendEmail } = require('../utils/send-email');
 const verifyToken = require('../middlewares/verifyToken');
+const { getBlobSasUri } = require('../utils/storage-blob');
 
 // Create new booking iteme
 router.post('/', verifyToken, async (req, res) => {
@@ -53,8 +54,8 @@ router.post('/', verifyToken, async (req, res) => {
     for (var i = 0; i < rT; i++) {
 
         queries.push(
-            { startTime: { $lte: slotStart }, endTime: { $gte: slotStart } },
-            { startTime: { $lte: slotEnd }, endTime: { $gte: slotEnd } },
+            { startTime: { $lte: slotStart }, endTime: { $gt: slotStart } },
+            { startTime: { $lt: slotEnd }, endTime: { $gte: slotEnd } },
             { startTime: { $gte: slotStart }, endTime: { $lte: slotEnd } }
         )
 
@@ -156,6 +157,15 @@ router.get('/:id', async (req, res) => {
     const db = await connectToDB();
     try {
         const result = await db.collection('booking').findOne({ _id: new ObjectId(id) });
+
+        if (!result) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        if (result.filename) {
+            result.imageUri = await getBlobSasUri(result.filename);
+        }
+
         res.status(200).json({ result });
     } catch (err) {
         res.status(400).json({ message: err.message });

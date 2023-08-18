@@ -1,4 +1,4 @@
-const { BlobServiceClient } = require("@azure/storage-blob");
+const { BlobServiceClient, BlobSASPermissions, generateBlobSASQueryParameters } = require("@azure/storage-blob");
 const { v1: uuidv1 } = require("uuid");
 require("dotenv").config();
 
@@ -21,7 +21,7 @@ async function uploadToAzure(foo) {
 
         // Create a unique name for the container
         // const containerName = 'quickstart' + uuidv1();  
-        const containerName = 'quickstart';
+        const containerName = 'room-booking';
 
         console.log('\nCreating container...');
         console.log('\t', containerName);
@@ -36,7 +36,8 @@ async function uploadToAzure(foo) {
 
         // Create a unique name for the blob
         // const blobName = 'quickstart' + uuidv1() + '.txt';  
-        const blobName = foo.name;
+        // const blobName = foo.name;
+        const blobName = uuidv1() + '.' + foo.name.split(".").pop().toLowerCase()
 
         // Get a block blob client
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
@@ -78,7 +79,7 @@ async function downloadFromAzure(foo) {
 
         // Create a unique name for the container
         // const containerName = 'quickstart' + uuidv1();  
-        const containerName = 'quickstart';
+        const containerName = 'room-booking';
 
         console.log('\nCreating container...');
         console.log('\t', containerName);
@@ -93,7 +94,7 @@ async function downloadFromAzure(foo) {
 
         // Create a unique name for the blob
         // const blobName = 'quickstart' + uuidv1() + '.txt';  
-        const blobName = foo.name;
+        const blobName = foo;
 
         // Get a block blob client
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
@@ -103,10 +104,12 @@ async function downloadFromAzure(foo) {
         // In browsers, get downloaded data by accessing downloadBlockBlobResponse.blobBody
         const downloadBlockBlobResponse = await blockBlobClient.download(0);
         console.log('\nDownloaded blob content...');
-        console.log(
-            '\t',
-            await streamToText(downloadBlockBlobResponse.readableStreamBody)
-        );
+        // console.log(
+        //     '\t',
+        //     await streamToText(downloadBlockBlobResponse.readableStreamBody)
+        // );
+
+        return await downloadBlockBlobResponse.blobBody;
     } catch (err) {
         console.log(`Error: ${err.message}`);
     }
@@ -138,4 +141,52 @@ async function streamToText(readable) {
     return data;
 }
 
-module.exports = { uploadToAzure, downloadFromAzure };
+// Create a service SAS for a blob
+function getBlobSasUri(blobName) {
+
+    // Quick start code goes here
+    const AZURE_STORAGE_CONNECTION_STRING =
+        process.env.AZURE_STORAGE_CONNECTION_STRING;
+
+    if (!AZURE_STORAGE_CONNECTION_STRING) {
+        throw Error('Azure Storage Connection string not found');
+    }
+
+    // Create the BlobServiceClient object with connection string
+    const blobServiceClient = BlobServiceClient.fromConnectionString(
+        AZURE_STORAGE_CONNECTION_STRING
+    );
+
+    // Create a unique name for the container
+    // const containerName = 'quickstart' + uuidv1();  
+    const containerName = 'room-booking';
+
+    console.log('\nCreating container...');
+    console.log('\t', containerName);
+
+    // Get a reference to a container
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+
+    var storedPolicyName = null;
+    var sharedKeyCredential = blobServiceClient.credential;
+
+    const sasOptions = {
+        containerName: containerClient.containerName,
+        blobName: blobName
+    };
+
+    if (storedPolicyName == null) {
+        sasOptions.startsOn = new Date();
+        sasOptions.expiresOn = new Date(new Date().valueOf() + 3600 * 1000);
+        sasOptions.permissions = BlobSASPermissions.parse("r");
+    } else {
+        sasOptions.identifier = storedPolicyName;
+    }
+
+    const sasToken = generateBlobSASQueryParameters(sasOptions, sharedKeyCredential).toString();
+    console.log(`SAS token for blob is: ${sasToken}`);
+
+    return `${containerClient.getBlockBlobClient(blobName).url}?${sasToken}`;
+}
+
+module.exports = { uploadToAzure, getBlobSasUri };
