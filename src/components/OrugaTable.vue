@@ -139,7 +139,7 @@ onMounted(() => {
         </o-table-column>
 
         <o-table-column field="status" label="Status" v-slot="props">
-            <router-link :to="'/booking/' + props.row.id">
+            <router-link :to="'/booking/' + props.row._id">
                 <span class="tag is-warning" v-if="props.row.status == 'Pending'">
                     {{ props.row.status }}
                 </span>

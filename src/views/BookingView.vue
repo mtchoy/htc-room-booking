@@ -74,6 +74,12 @@ watch(() => booking.value.room, async () => {
     }
 });
 
+watch(() => dropFile.value, async () => {
+    if (dropFile.value) {
+        fileChanged();
+    }
+})
+
 const submitForm = async function () {
 
     var postData = { ...booking.value };
@@ -112,7 +118,7 @@ const submitForm = async function () {
 
 const fetchThisBooking = async function () {
 
-    var response = await fetch(`/api/bookings/oid/${id}`);
+    var response = await fetch(`/api/bookings/${id}`);
 
     if (response.ok) {
 
@@ -163,26 +169,31 @@ const changeStatus = async function (newStatus) {
 
 const fileChanged = async function () {
 
-    if (!["png", "jpeg", "jpg", "gif"].includes(dropFile.name.split(".").pop().toLowerCase())) {
+    if (!["png", "jpeg", "jpg", "gif"].includes(dropFile.value.name.split(".").pop().toLowerCase())) {
         dropFile.value = null;
-        $buefy.snackbar.open("Only image files are allowed");
+        oruga.snackbar.open("Only image files are allowed");
         return
     }
 
     const formData = new FormData();
-    formData.append('avatar', dropFile.value);
+    formData.append('foo', dropFile.value);
 
     try {
-        var response = await fetch("/file/upload", {
+        var response = await fetch("/api/upload", {
             method: "POST",
             body: formData
         });
         if (response.ok) {
-            var data = await response.json();
+            // var data = await response.json();
             // var pieces = data.files[0].fd.split("/");
             // this.booking.fd = "/images/" + pieces.pop();
 
-            booking.value.fd = data.files[0].fd;
+            // booking.value.fd = data.files[0].fd;
+
+            var data = await response.text();
+            booking.value.filename = data;
+
+            // alert(booking.value.filename)
 
         } else {
             console.log(response.status);
@@ -264,7 +275,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <form id="printMe" class="container columns is-centered" @submit.prevent="submitForm">
+    <form id="printMe" class="container columns is-centered is-multiline" @submit.prevent="submitForm">
         <div class="column is-half">
             <div class="columns is-multiline">
 
@@ -407,7 +418,7 @@ onMounted(() => {
 
                 <div class="column is-three-fifths-widescreen is-full-tablet" v-if="!isReading && locale == 'en'">
                     <o-field>
-                        <o-upload v-model="dropFile" drag-drop @input="fileChanged">
+                        <o-upload v-model="dropFile" drag-drop>
                             <section class="section">
                                 <div class="content has-text-centered">
                                     <p>
@@ -433,7 +444,7 @@ onMounted(() => {
                 <div class="column is-three-fifths-widescreen is-full-tablet" v-if="isReading && locale == 'en'">
                     <div class="buttons">
                         <o-button label="See Floor Plan" type="is-primary" size="is-medium"
-                            @click="isImageModalActive = true" :disabled="!booking.fd">
+                            @click="isImageModalActive = true" :disabled="!booking.filename">
                         </o-button>
                     </div>
 
@@ -443,9 +454,9 @@ onMounted(() => {
                         <o-skeleton height="180px" v-if="!booking.preSignedURL"></o-skeleton>
                     </figure> -->
 
-                    <o-modal v-model="isImageModalActive">
+                    <o-modal v-model:active="isImageModalActive">
                         <p class="image">
-                            <img :src="booking.preSignedURL">
+                            <img :src="booking.imageUri">
                         </p>
                     </o-modal>
                 </div>
@@ -512,19 +523,19 @@ onMounted(() => {
                         v-if="isReading && canApprove && booking.status != 'Approved'">Approve</button>
                     <button class="button is-link is-danger" type="button" @click="changeStatus('Rejected')"
                         v-if="isReading && canApprove && booking.status != 'Rejected'">Reject</button>
-                    <button class="button is-dark" type="button" @click="" v-if="isReading && canReview">Print</button>
+                    <!-- <button class="button is-dark" type="button" @click="" v-if="isReading && canReview">Print</button> -->
+                    <button class="button is-dark" @click="locale = 'zh'" v-print="printObj">Print</button>
                 </div>
             </div>
 
         </div>
+        
+        <!-- <div id="loading" v-show="printLoading"></div> -->
+        
+        <div class="container column is-full" v-if="locale == 'zh' && booking.imageUri">
+            <img :src="booking.imageUri" />
+        </div>
     </form>
-
-    <button @click="locale = 'zh'" v-print="printObj">Print local range</button>
-    <div id="loading" v-show="printLoading"></div>
-
-    <div class="container" v-if="locale == 'zh' && booking.preSignedURL">
-        <img :src="booking.preSignedURL" />
-    </div>
 </template>
 
 <style scoped>
