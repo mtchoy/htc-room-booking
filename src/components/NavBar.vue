@@ -82,8 +82,29 @@ const navbarOptions = {
         // },
         {
             type: "link",
+            text: "New Booking",
+            path: { name: "new-booking" },
+            iconRight: '<i class="fa fa-long-arrow-right fa-fw"></i>',
+        },
+        {
+            type: "link",
             text: "Bookings",
             path: { name: "booking-list" },
+            iconRight: '<i class="fa fa-long-arrow-right fa-fw"></i>',
+        },
+        {
+            type: "link",
+            text: "Search by Date",
+            // path: { name: "chart-view", params: { mode: 1 } },
+            path: '/chart-view/1',
+            iconRight: '<i class="fa fa-long-arrow-right fa-fw"></i>',
+        },
+        {
+            isLinkAction: true,
+            type: "link",
+            text: "Search by Room",
+            // path: { name: "chart-view", params: { mode: 1 } },
+            path: '/chart-view/2',
             iconRight: '<i class="fa fa-long-arrow-right fa-fw"></i>',
         },
     ],
@@ -114,10 +135,10 @@ const navbarOptions = {
 }
 
 .vnb .button-red {
-  background: #ff3b30;
+    background: #ff3b30;
 }
 
 .vnb .button-red:hover {
-  background: #fc0d00;
+    background: #fc0d00;
 }
 </style>
