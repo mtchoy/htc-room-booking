@@ -90,7 +90,7 @@ router.post('/', verifyToken, async (req, res) => {
         const booking = await db.collection('booking').insertOne(req.body);
 
         for (var timeslot of timeslots) {
-            timeslot.booking = booking._id;
+            timeslot.booking = booking.insertedId;
             timeslot.room = room;
             timeslot.status = req.body.status;
         }
