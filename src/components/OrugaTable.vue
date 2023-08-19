@@ -110,7 +110,7 @@ onMounted(() => {
         :default-sort="[sortField, sortOrder]" @sort="onSort" height="480px">
 
         <o-table-column field="id" label="ID" width="40" numeric v-slot="props">
-            {{ props.row.id }}
+            {{ props.row._id }}
         </o-table-column>
 
         <o-table-column field="createdAt" label="Created At" numeric v-slot="props">

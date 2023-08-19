@@ -157,7 +157,7 @@ const changeStatus = async function (newStatus) {
 
     if (response.ok) {
 
-        $buefy.snackbar.open(`OK`)
+        oruga.snackbar.open(`OK`)
 
     } else {
         alert(response.statusText);
@@ -205,7 +205,7 @@ const fileChanged = async function () {
 
 const withdraw = function () {
 
-    this.$buefy.dialog.confirm({
+    oruga.dialog.confirm({
         message: 'Are you sure to withdraw this booking?',
         onConfirm: async () => {
 
@@ -215,7 +215,7 @@ const withdraw = function () {
 
             if (response.ok) {
 
-                this.$buefy.snackbar.open({
+                oruga.snackbar.open({
                     message: 'Application withdrawn successfully.',
                     type: 'is-success',
                     position: 'is-top',
@@ -524,7 +524,7 @@ onMounted(() => {
                     <button class="button is-link is-danger" type="button" @click="changeStatus('Rejected')"
                         v-if="isReading && canApprove && booking.status != 'Rejected'">Reject</button>
                     <!-- <button class="button is-dark" type="button" @click="" v-if="isReading && canReview">Print</button> -->
-                    <button class="button is-dark" @click="locale = 'zh'" v-print="printObj">Print</button>
+                    <button class="button is-dark" @click="locale = 'zh'" v-if="isReading && canReview" v-print="printObj" >Print</button>
                 </div>
             </div>
 
