@@ -17,6 +17,8 @@
     "google-auth-library": "^8.7.0",
     "jsonwebtoken": "^9.0.1",
     "mongodb": "^5.2.0",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "passport": "^0.6.0",
+    "passport-azure-ad": "^4.3.5"
   }
 }
