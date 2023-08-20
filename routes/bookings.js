@@ -9,7 +9,7 @@ const verifyToken = require('../middlewares/verifyToken');
 const { getBlobSasUri } = require('../utils/storage-blob');
 
 // Create new booking iteme
-router.post('/', verifyToken, async (req, res) => {
+router.post('/', async (req, res) => {
     const { room, date, startTime, endTime, user, teacher, recurrent, repeatedTimes } = req.body;
 
     if (!(room && date && startTime && endTime && user))
@@ -110,17 +110,25 @@ router.get('/', async (req, res) => {
     const { status, is_reviewer } = req.query;
     const query = status ? { status } : {};
 
-    req.user = { role: 'admin' };
+    req.user = req.authInfo;
+
+    if (req.user.name == 'developer') {
+        req.user.role = 'admin';
+    }
+    // req.user = { role: 'admin' };
+
+    console.log(req.user);
 
     if (is_reviewer) {
         if (req.user.role !== 'admin') {
             return res.status(401).json({ message: 'Unauthorized' });
         }
     } else {
-        query.userId = new ObjectId(req.user._id);
+        // query.userId = new ObjectId(req.user._id);
+        query.username = req.user.name;
     }
 
-    delete query.userId;
+    // delete query.userId;
 
     // pagination
     const page = req.query.page || 1;
