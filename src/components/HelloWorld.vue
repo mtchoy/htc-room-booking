@@ -1,9 +1,14 @@
 <script setup>
 // import { PublicClientApplication, InteractionRequiredAuthError, InteractionStatus } from '@azure/msal-browser';
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useIsAuthenticated } from '../composition-api/useIsAuthenticated';
 import SignInButton from "./SignInButton.vue";
 import SignOutButton from "./SignOutButton.vue";
+
+import { useMsalAuthentication } from "../composition-api/useMsalAuthentication";
+import { InteractionType } from "@azure/msal-browser";
+// import { reactive,  } from 'vue'
+import { loginRequest } from "../authConfig";
 
 defineProps({
   msg: String,
@@ -12,6 +17,24 @@ defineProps({
 const count = ref(0)
 
 const isAuthenticated = useIsAuthenticated();
+
+const { result, acquireToken } = useMsalAuthentication(InteractionType.Redirect, loginRequest);
+
+watch(isAuthenticated, (isAuthenticated) => {
+  if (isAuthenticated) {
+    // loadAsyncData(result.value.accessToken).catch(() => acquireToken());
+    acquireToken();
+  }
+});
+
+watch(result, () => {
+  // Fetch new data from the API each time the result changes (i.e. a new access token was acquired)
+  // updateData();
+  // alert(JSON.stringify(result.value))
+  localStorage.setItem('msalAccount', JSON.stringify(result.value.account));
+  localStorage.setItem('msalToken', result.value.accessToken);
+  location.assign('/bookings')
+});
 
 // const account = ref(undefined)
 // const github = ref('https://github.com/cmatskas')
