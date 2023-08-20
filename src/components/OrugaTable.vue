@@ -1,5 +1,29 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useMsalAuthentication } from "../composition-api/useMsalAuthentication";
+import { InteractionType } from "@azure/msal-browser";
+// import { reactive,  } from 'vue'
+import { loginRequest } from "../authConfig";
+
+const { result, acquireToken } = useMsalAuthentication(InteractionType.Redirect, loginRequest);
+
+// const data = ref(null);
+
+async function updateData() {
+    if (result.value.accessToken) {
+        // const apiResult = await callAPI(result.value.accessToken).catch(() => acquireToken());
+        // data.value = apiResult;
+
+        await loadAsyncData(result.value.accessToken).catch(() => acquireToken());
+    }
+}
+
+updateData();
+
+watch(result, () => {
+    // Fetch new data from the API each time the result changes (i.e. a new access token was acquired)
+    updateData();
+});
 
 const props = defineProps({
     isReviewer: Boolean,
@@ -16,7 +40,7 @@ const defaultSortOrder = ref('desc')
 const page = ref(1)
 const perPage = ref(10)
 
-const loadAsyncData = () => {
+const loadAsyncData = (token) => {
     var params = [
         // 'api_key=bb6f51bef07465653c3e553d6ab161a8',
         // 'language=en-US',
@@ -36,7 +60,11 @@ const loadAsyncData = () => {
     }
 
     loading.value = true
-    fetch(`/api/bookings?${params}`)
+    fetch(`/api/bookings?${params}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
         .then((response) => response.json())
         .then((result) => {
             // api.themoviedb.org manage max 1000 pages

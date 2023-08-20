@@ -14,6 +14,9 @@ import 'vue-navigation-bar/dist/vue-navigation-bar.css';
 
 import VueApexCharts from "vue3-apexcharts";
 
+import { msalPlugin } from "./plugins/msalPlugin";
+import { msalInstance } from "./authConfig";
+
 localStorage.setItem("rooms", JSON.stringify(
     ["Hall", "CvrdPlayGndEnt", "CvrdPlayGndMir", "CvrdPlayGndAnnex", "RdgCor", "MusicRm", "ConfRm1F",
         "ConfRm6F", "MpRm413", "OpenPlayGnd", "RoofPlayGnd", "StdntActCntr", "Rm514", "Rm214", "Rm104",
@@ -31,7 +34,9 @@ const i18n = createI18n({
     // ...
 })
 
-createApp(App).use(router).use(Oruga, bulmaConfig).use(VueApexCharts).use(i18n)
-    .component('vue-navigation-bar', VueNavigationBar).mount('#app')
+await msalInstance.initialize();
+
+createApp(App).use(router).use(msalPlugin, msalInstance).use(Oruga, bulmaConfig).use(VueApexCharts)
+    .use(i18n).component('vue-navigation-bar', VueNavigationBar).mount('#app')
 
 

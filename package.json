@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@azure/msal-browser": "^3.0.2",
     "@mdi/font": "^7.2.96",
     "@oruga-ui/oruga-next": "^0.5.10",
     "@oruga-ui/theme-bulma": "^0.2.9",
