@@ -162,12 +162,19 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
 
+    req.user = req.authInfo;
+    req.user.role = 'staff';
+
     const db = await connectToDB();
     try {
         const result = await db.collection('booking').findOne({ _id: new ObjectId(id) });
 
         if (!result) {
             return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        if (result.username !== req.user.name && req.user.role !== 'staff') {
+            return res.status(401).json({ message: 'Unauthorized' });
         }
 
         if (result.filename) {
@@ -182,19 +189,19 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.get('/oid/:id', async (req, res) => {
-    const { id } = req.params;
+// router.get('/oid/:id', async (req, res) => {
+//     const { id } = req.params;
 
-    const db = await connectToDB();
-    try {
-        const result = await db.collection('booking').findOne({ id: parseInt(id) });
-        res.status(200).json({ result });
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    } finally {
-        await db.client.close();
-    }
-});
+//     const db = await connectToDB();
+//     try {
+//         const result = await db.collection('booking').findOne({ id: parseInt(id) });
+//         res.status(200).json({ result });
+//     } catch (err) {
+//         res.status(400).json({ message: err.message });
+//     } finally {
+//         await db.client.close();
+//     }
+// });
 
 // Change booking status
 router.put('/:id', async (req, res) => {

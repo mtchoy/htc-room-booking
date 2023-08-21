@@ -78,7 +78,7 @@ app.use(fileUpload());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 // app.use('/bookings', bookingsRouter);
-app.use('/timeslots', timeslotsRouter);
+// app.use('/timeslots', timeslotsRouter);
 
 app.use(passport.initialize());
 
@@ -118,6 +118,55 @@ app.use('/bookings', (req, res, next) => {
     })(req, res, next);
 },
     bookingsRouter, // the router with all the routes
+    (err, req, res, next) => {
+        /**
+         * Add your custom error handling logic here. For more information, see:
+         * http://expressjs.com/en/guide/error-handling.html
+         */
+
+        // set locals, only providing error in development
+        res.locals.message = err.message;
+        res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+        // send error response
+        res.status(err.status || 500).send(err);
+    }
+);
+
+app.use('/timeslots', (req, res, next) => {
+    passport.authenticate('oauth-bearer', {
+        session: false,
+
+        /**
+         * If you are building a multi-tenant application and you need supply the tenant ID or name dynamically,
+         * uncomment the line below and pass in the tenant information. For more information, see:
+         * https://github.com/AzureAD/passport-azure-ad#423-options-available-for-passportauthenticate
+         */
+
+        // tenantIdOrName: <some-tenant-id-or-name>
+
+    }, (err, user, info) => {
+        if (err) {
+            /**
+             * An error occurred during authorization. Either pass the error to the next function
+             * for Express error handler to handle, or send a response with the appropriate status code.
+             */
+            return res.status(401).json({ error: err.message });
+        }
+
+        if (!user) {
+            // If no user object found, send a 401 response.
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        if (info) {
+            // access token payload will be available in req.authInfo downstream
+            req.authInfo = info;
+            return next();
+        }
+    })(req, res, next);
+},
+    timeslotsRouter, // the router with all the routes
     (err, req, res, next) => {
         /**
          * Add your custom error handling logic here. For more information, see:
