@@ -90,7 +90,8 @@ const submitForm = async function () {
     var response = await fetch("/api/bookings/", {
         method: "post",
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',    
+            'Authorization': `Bearer ${localStorage.getItem('msalToken')}`
         },
         body: JSON.stringify(postData)
     });
@@ -118,7 +119,11 @@ const submitForm = async function () {
 
 const fetchThisBooking = async function () {
 
-    var response = await fetch(`/api/bookings/${id}`);
+    var response = await fetch(`/api/bookings/${id}`, {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('msalToken')}`
+        }
+    });
 
     if (response.ok) {
 
@@ -149,7 +154,8 @@ const changeStatus = async function (newStatus) {
     var response = await fetch("/booking/" + id, {
         method: 'put',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('msalToken')}`
             // 'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: JSON.stringify(booking.value)
@@ -181,6 +187,9 @@ const fileChanged = async function () {
     try {
         var response = await fetch("/api/upload", {
             method: "POST",
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('msalToken')}`
+            },
             body: formData
         });
         if (response.ok) {
@@ -210,7 +219,10 @@ const withdraw = function () {
         onConfirm: async () => {
 
             var response = await fetch("/booking/" + id, {
-                method: 'delete'
+                method: 'delete',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('msalToken')}`
+                } 
             });
 
             if (response.ok) {
