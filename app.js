@@ -58,7 +58,25 @@ const bearerStrategy = new passportAzureAd.BearerStrategy({
      * If needed, pass down additional user info to route using the second argument below.
      * This information will be available in the req.user object.
      */
-    return done(null, {}, token);
+
+    var rights = {
+        canApprove: false,
+        canSeeList: false,
+        canSeeOne: false,
+    };
+
+    if (token.groups.includes("f6f8e7d4-647a-434f-86d6-3949165d955f")) {
+        rights.canApprove = true;
+        rights.canSeeList = true;
+        rights.canSeeOne = true;
+    } else if (token.groups.includes("f1c9b0a0-1f1a-4f1e-8f1e-8f1e8f1e8f1e")) {
+        rights.canSeeList = true;
+        rights.canSeeOne = true;
+    } else if (token.groups.includes("f1c9b0a0-1f1a-4f1e-8f1e-8f1e8f1e8f1e")) {
+        rights.canSeeOne = true;
+    }
+
+    return done(null, { ...token, ...rights }, token);
 });
 
 var indexRouter = require('./routes/index');
@@ -113,6 +131,7 @@ app.use('/bookings', (req, res, next) => {
         if (info) {
             // access token payload will be available in req.authInfo downstream
             req.authInfo = info;
+            req.user = user;
             return next();
         }
     })(req, res, next);

@@ -77,13 +77,13 @@ router.post('/', async (req, res) => {
 
         if (matched) return res.status(409).json({ message: 'At least one timeslot is not available.' });
 
-        if (req.user.canApprove || (room == "Rm514" && !/^s\d{6}$/.test(req.user.username.toLowerCase())))
+        if (req.user.canApprove || (room == "Rm514" && !/^s\d{6}$/.test(req.user.name.toLowerCase())))
             req.body.status = "Approved";
         else {
             req.body.status = "Pending";
         }
 
-        req.body.username = req.user.username;
+        req.body.username = req.user.name;
         req.body.createdAt = new Date();
         req.body.updatedAt = new Date();
 
@@ -110,17 +110,10 @@ router.get('/', async (req, res) => {
     const { status, is_reviewer } = req.query;
     const query = status ? { status } : {};
 
-    req.user = req.authInfo;
-
-    if (req.user.name == 'developer') {
-        req.user.role = 'admin';
-    }
-    // req.user = { role: 'admin' };
-
-    console.log(req.user);
+    console.log(req.user)
 
     if (is_reviewer) {
-        if (req.user.role !== 'admin') {
+        if (!req.user.canSeeList) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
     } else {
@@ -162,9 +155,6 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
 
-    req.user = req.authInfo;
-    req.user.role = 'staff';
-
     const db = await connectToDB();
     try {
         const result = await db.collection('booking').findOne({ _id: new ObjectId(id) });
@@ -173,7 +163,7 @@ router.get('/:id', async (req, res) => {
             return res.status(404).json({ message: 'Booking not found' });
         }
 
-        if (result.username !== req.user.name && req.user.role !== 'staff') {
+        if (result.username !== req.user.name && !req.user.canSeeOne) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
 
@@ -209,6 +199,10 @@ router.put('/:id', async (req, res) => {
     const { status } = req.body;
     const updatedAt = new Date();
 
+    if (!req.user.canApprove) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+
     const db = await connectToDB();
     try {
         const result = await db.collection('booking').updateOne({ _id: new ObjectId(id) }, { $set: { status, updatedAt } });
@@ -230,6 +224,16 @@ router.delete('/:id', async (req, res) => {
 
     const db = await connectToDB();
     try {
+        const booking = await db.collection('booking').findOne({ _id: new ObjectId(id) });
+
+        if (!booking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        if (booking.username !== req.user.name && !req.user.canApprove) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
         const result = await db.collection('booking').deleteOne({ _id: new ObjectId(id) });
         await db.collection('timeslot').deleteOne({ booking: new ObjectId(id) });
         res.status(200).json({ message: 'Booking deleted successfully' });
