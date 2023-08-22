@@ -1,29 +1,5 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-// import { useMsalAuthentication } from "../composition-api/useMsalAuthentication";
-// import { InteractionType } from "@azure/msal-browser";
-// // import { reactive,  } from 'vue'
-// import { loginRequest } from "../authConfig";
-
-// const { result, acquireToken } = useMsalAuthentication(InteractionType.Redirect, loginRequest);
-
-// // const data = ref(null);
-
-// async function updateData() {
-//     if (result.value.accessToken) {
-//         // const apiResult = await callAPI(result.value.accessToken).catch(() => acquireToken());
-//         // data.value = apiResult;
-
-//         loadAsyncData(result.value.accessToken).catch(() => acquireToken());
-//     }
-// }
-
-
-
-// watch(result, () => {
-//     // Fetch new data from the API each time the result changes (i.e. a new access token was acquired)
-//     updateData();
-// });
 
 const props = defineProps({
     isReviewer: Boolean,

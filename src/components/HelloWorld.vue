@@ -1,14 +1,12 @@
 <script setup>
-// import { PublicClientApplication, InteractionRequiredAuthError, InteractionStatus } from '@azure/msal-browser';
 import { ref, onMounted, watch } from 'vue'
 import { useIsAuthenticated } from '../composition-api/useIsAuthenticated';
-import SignInButton from "./SignInButton.vue";
-import SignOutButton from "./SignOutButton.vue";
-
 import { useMsalAuthentication } from "../composition-api/useMsalAuthentication";
 import { InteractionType } from "@azure/msal-browser";
-// import { reactive,  } from 'vue'
 import { loginRequest } from "../authConfig";
+
+import SignInButton from "./SignInButton.vue";
+import SignOutButton from "./SignOutButton.vue";
 
 defineProps({
   msg: String,
@@ -33,7 +31,16 @@ watch(result, () => {
   // alert(JSON.stringify(result.value))
   localStorage.setItem('msalAccount', JSON.stringify(result.value.account));
   localStorage.setItem('msalToken', result.value.accessToken);
-  location.assign('/bookings')
+
+  if (result.value.account.idTokenClaims.groups.includes('f6f8e7d4-647a-434f-86d6-3949165d955f')) {
+    localStorage.setItem('canApprove', true);
+  } else {
+    localStorage.setItem('canApprove', false);
+  }
+
+  alert(JSON.stringify(result.value.accessToken))
+  alert(JSON.stringify(result.value))
+  // location.assign('/bookings')
 });
 
 // const account = ref(undefined)
@@ -176,8 +183,10 @@ watch(result, () => {
     </div>
 
   </div> -->
-  <SignOutButton v-if="isAuthenticated" />
-  <SignInButton v-else />
+  <div style="height:480px">
+    <SignOutButton v-if="isAuthenticated" />
+    <SignInButton v-else />
+  </div>
 </template>
 
 <style scoped>

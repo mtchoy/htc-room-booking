@@ -107,6 +107,14 @@ const navbarOptions = {
             path: '/chart-view/2',
             iconRight: '<i class="fa fa-long-arrow-right fa-fw"></i>',
         },
+        {
+            isLinkAction: true,
+            type: "link",
+            text: "Equipment",
+            path: { name: "equipment-view"},
+            // path: '/chart-view/2',
+            iconRight: '<i class="fa fa-long-arrow-right fa-fw"></i>',
+        },
     ],
     menuOptionsRight: [
         {

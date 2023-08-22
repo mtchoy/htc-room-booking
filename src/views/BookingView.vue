@@ -46,7 +46,7 @@ const isImageModalActive = ref(false);
 const isReading = ref(id ? true : false);
 // const canBook = ref("<%= (!req.session.canBook) %>" == "false");
 const canReview = ref(true);
-const canApprove = ref("<%= (!req.session.canApprove) %>" == "false");
+const canApprove = ref(localStorage.getItem("canApprove") == "true");
 const selectedRoom = ref({})
 
 const { oruga } = useProgrammatic()
@@ -151,7 +151,7 @@ const changeStatus = async function (newStatus) {
 
     booking.value.status = newStatus;
 
-    var response = await fetch("/booking/" + id, {
+    var response = await fetch("/api/bookings/" + id, {
         method: 'put',
         headers: {
             'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ const changeStatus = async function (newStatus) {
 
     if (response.ok) {
 
-        oruga.snackbar.open(`OK`)
+        oruga.notification.open(`OK`)
 
     } else {
         alert(response.statusText);
@@ -177,7 +177,7 @@ const fileChanged = async function () {
 
     if (!["png", "jpeg", "jpg", "gif"].includes(dropFile.value.name.split(".").pop().toLowerCase())) {
         dropFile.value = null;
-        oruga.snackbar.open("Only image files are allowed");
+        oruga.notification.open("Only image files are allowed");
         return
     }
 
@@ -218,7 +218,7 @@ const withdraw = function () {
         message: 'Are you sure to withdraw this booking?',
         onConfirm: async () => {
 
-            var response = await fetch("/booking/" + id, {
+            var response = await fetch("/api/bookings/" + id, {
                 method: 'delete',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('msalToken')}`
@@ -227,7 +227,7 @@ const withdraw = function () {
 
             if (response.ok) {
 
-                oruga.snackbar.open({
+                oruga.notification.open({
                     message: 'Application withdrawn successfully.',
                     type: 'is-success',
                     position: 'is-top',

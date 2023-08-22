@@ -23,5 +23,7 @@ const loginRedirect = () => {
             </el-dropdown-menu>
         </template>
     </el-dropdown> -->
-    <button type="button" @click="loginPopup">Sign In</button>
+    <button type="button" @click="loginPopup">
+      <img src="../assets/ms-symbollockup_signin_dark.svg" alt="Sign In" width="215" height="41" />
+    </button>
 </template>
