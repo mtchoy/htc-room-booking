@@ -36,11 +36,11 @@ const loadAsyncData = () => {
     }
 
     loading.value = true
-    const token = localStorage.getItem('msalToken');
+    alert(localStorage.getItem('msalToken'))
 
     fetch(`/api/bookings?${params}`, {
         headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${localStorage.getItem('msalToken')}`
         }
     })
         .then((response) => response.json())
