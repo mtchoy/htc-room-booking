@@ -1,12 +1,15 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { useIsAuthenticated } from '../composition-api/useIsAuthenticated';
-import { useMsalAuthentication } from "../composition-api/useMsalAuthentication";
-import { InteractionType } from "@azure/msal-browser";
-import { loginRequest } from "../authConfig";
+// import { useIsAuthenticated } from '../composition-api/useIsAuthenticated';
+// import { useMsalAuthentication } from "../composition-api/useMsalAuthentication";
+// import { InteractionType } from "@azure/msal-browser";
+// import { loginRequest } from "../authConfig";
 
-import SignInButton from "./SignInButton.vue";
-import SignOutButton from "./SignOutButton.vue";
+// import SignInButton from "./SignInButton.vue";
+// import SignOutButton from "./SignOutButton.vue";
+
+import { version } from "../../package.json";
+
 
 defineProps({
   msg: String,
@@ -14,34 +17,36 @@ defineProps({
 
 const count = ref(0)
 
-const isAuthenticated = useIsAuthenticated();
+// const isAuthenticated = useIsAuthenticated();
 
-const { result, acquireToken } = useMsalAuthentication(InteractionType.Redirect, loginRequest);
+// const { result, acquireToken } = useMsalAuthentication(InteractionType.Redirect, loginRequest);
 
-watch(isAuthenticated, (isAuthenticated) => {
-  if (isAuthenticated) {
-    // loadAsyncData(result.value.accessToken).catch(() => acquireToken());
-    acquireToken();
-  }
-});
+// const canSeeAll = ref(localStorage.getItem("canSeeAll") == "true");
 
-watch(result, () => {
-  // Fetch new data from the API each time the result changes (i.e. a new access token was acquired)
-  // updateData();
-  // alert(JSON.stringify(result.value))
-  localStorage.setItem('msalAccount', JSON.stringify(result.value.account));
-  localStorage.setItem('msalToken', result.value.accessToken);
+// watch(isAuthenticated, (isAuthenticated) => {
+//   if (isAuthenticated) {
+//     // loadAsyncData(result.value.accessToken).catch(() => acquireToken());
+//     acquireToken();
+//   }
+// });
 
-  if (result.value.account.idTokenClaims.groups.includes('f6f8e7d4-647a-434f-86d6-3949165d955f')) {
-    localStorage.setItem('canApprove', true);
-  } else {
-    localStorage.setItem('canApprove', false);
-  }
+// watch(result, () => {
+//   // Fetch new data from the API each time the result changes (i.e. a new access token was acquired)
+//   // updateData();
+//   // alert(JSON.stringify(result.value))
+//   localStorage.setItem('msalAccount', JSON.stringify(result.value.account));
+//   localStorage.setItem('msalToken', result.value.accessToken);
 
-  alert(JSON.stringify(result.value.accessToken))
-  alert(JSON.stringify(result.value))
-  // location.assign('/bookings')
-});
+//   if (result.value.account.idTokenClaims.groups.includes('f6f8e7d4-647a-434f-86d6-3949165d955f')) {
+//     localStorage.setItem('canApprove', true);
+//     localStorage.setItem('canSeeAll', true);
+//     localStorage.setItem('canSeeOne', true);
+//   }
+
+//   alert(JSON.stringify(result.value.accessToken))
+//   alert(JSON.stringify(result.value))
+//   // location.assign('/bookings')
+// });
 
 // const account = ref(undefined)
 // const github = ref('https://github.com/cmatskas')
@@ -184,8 +189,17 @@ watch(result, () => {
 
   </div> -->
   <div style="height:480px">
-    <SignOutButton v-if="isAuthenticated" />
+    <section>
+      <h1>HTC Room Booking System</h1>
+    </section>
+    <!-- <SignOutButton v-if="isAuthenticated" />
     <SignInButton v-else />
+    <br><br>
+    <div class="my-4">
+      <RouterLink to="/equipment-view" v-if="canSeeAll">Equipments</RouterLink>
+    </div>
+    <br><br> -->
+    <span class="tag is-light">Version: {{ version }}</span>
   </div>
 </template>
 

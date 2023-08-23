@@ -5,11 +5,12 @@ export const msalConfig = {
   auth: {
     clientId: '1d60c9bc-d4fe-4115-9ed3-1653ed510ebe',
     authority: 'https://login.microsoftonline.com/691f6e87-f236-4be9-a9da-894ffbeb16ef',
-    redirectUri: '/', // Must be registered as a SPA redirectURI on your app registration
+    redirectUri: '/redirect', // Must be registered as a SPA redirectURI on your app registration
     postLogoutRedirectUri: '/' // Must be registered as a SPA redirectURI on your app registration
   },
   cache: {
-    cacheLocation: 'localStorage'
+    cacheLocation: 'localStorage',
+    storeAuthStateInCookie: false
   },
   system: {
       loggerOptions: {

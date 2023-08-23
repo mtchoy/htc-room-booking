@@ -7,14 +7,14 @@ const { instance } = useMsal();
 const loginPopup = () => {
   instance.loginPopup(loginRequest);
 }
-    
+
 const loginRedirect = () => {
   instance.loginRedirect(loginRequest);
 }
 </script>
 
 <template>
-    <!-- <el-dropdown>
+  <!-- <el-dropdown>
         <el-button type="primary">Sign In</el-button>
         <template #dropdown>
             <el-dropdown-menu>
@@ -23,7 +23,7 @@ const loginRedirect = () => {
             </el-dropdown-menu>
         </template>
     </el-dropdown> -->
-    <button type="button" @click="loginPopup">
-      <img src="../assets/ms-symbollockup_signin_dark.svg" alt="Sign In" width="215" height="41" />
-    </button>
+  <!-- <button type="button" @click="loginPopup"> -->
+  <img src="../assets/ms-symbollockup_signin_dark.svg" alt="Sign In" type="button" @click="loginRedirect" />
+  <!-- </button> -->
 </template>

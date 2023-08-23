@@ -1,7 +1,7 @@
 <script setup>
 import { useMsal } from '../composition-api/useMsal';
 import WelcomeName from './WelcomeName.vue';
-    
+
 const { instance } = useMsal();
 
 const logoutPopup = () => {
@@ -16,7 +16,7 @@ const logoutRedirect = () => {
 </script>
 
 <template>
-    <!-- <el-dropdown>
+  <!-- <el-dropdown>
         <WelcomeName />
         <template #dropdown>
             <el-dropdown-menu>
@@ -25,5 +25,12 @@ const logoutRedirect = () => {
             </el-dropdown-menu>
         </template>
     </el-dropdown> -->
-    <button type="button" @click="logoutPopup">Sign Out</button>
+  <!-- <button type="button" class="btn btn-primary" @click="logoutPopup"><span style="color:black">Sign Out</span></button> -->
+  <div class="navbar-item">
+    <WelcomeName />
+  </div>
+  <div>
+    <a class="button is-primary is-light  is-outlined" @click="logoutPopup">Sign out
+      Microsoft account &nbsp; <i class="mdi mdi-logout"></i></a>
+  </div>
 </template>

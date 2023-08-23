@@ -35,6 +35,11 @@ const router = createRouter({
       name: 'equipment-view',
       component: () => import('../views/EquipmentView.vue'),
     },
+    {
+      path: '/redirect',
+      name: 'redirect-view',
+      component: () => import('../views/RedirectView.vue'),
+    },
   ],
 });
 

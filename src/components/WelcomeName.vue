@@ -23,7 +23,7 @@ const name = computed(() => {
 </script>
 
 <style>
-.welcome-name {
+/* .welcome-name {
     color: #fff;
-}
+} */
 </style>

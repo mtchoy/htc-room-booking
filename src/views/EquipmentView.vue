@@ -87,7 +87,7 @@ onMounted(async () => {
         </o-button>
     </div>
 
-    <table>
+    <table style="height:480px">
         <o-table :data="isEmpty ? [] : timeslots" :bordered="isBordered" :striped="isStriped" :narrowed="isNarrowed"
             :hoverable="isHoverable" :loading="isLoading" :focusable="isFocusable" :mobile-cards="hasMobileCards">
             <o-table-column field="id" :label="t('message.room')" width="40" numeric v-slot:default="props">
