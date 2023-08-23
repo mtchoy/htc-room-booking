@@ -10,6 +10,12 @@ import { ref, onMounted, watch } from 'vue'
 
 import { version } from "../../package.json";
 
+import { useIsAuthenticated } from '../composition-api/useIsAuthenticated';
+import SignInButton from "./SignInButton.vue";
+import SignOutButton from "./SignOutButton.vue";
+
+const isAuthenticated = useIsAuthenticated();
+
 
 defineProps({
   msg: String,
@@ -21,7 +27,7 @@ const count = ref(0)
 
 // const { result, acquireToken } = useMsalAuthentication(InteractionType.Redirect, loginRequest);
 
-// const canSeeAll = ref(localStorage.getItem("canSeeAll") == "true");
+const canSeeAll = ref(localStorage.getItem("canSeeAll") == "true");
 
 // watch(isAuthenticated, (isAuthenticated) => {
 //   if (isAuthenticated) {
@@ -192,13 +198,13 @@ const count = ref(0)
     <section>
       <h1>HTC Room Booking System</h1>
     </section>
-    <!-- <SignOutButton v-if="isAuthenticated" />
+    <SignOutButton v-if="isAuthenticated" />
     <SignInButton v-else />
     <br><br>
     <div class="my-4">
       <RouterLink to="/equipment-view" v-if="canSeeAll">Equipments</RouterLink>
     </div>
-    <br><br> -->
+    <br><br>
     <span class="tag is-light">Version: {{ version }}</span>
   </div>
 </template>

@@ -26,9 +26,9 @@ const logoutRedirect = () => {
         </template>
     </el-dropdown> -->
   <!-- <button type="button" class="btn btn-primary" @click="logoutPopup"><span style="color:black">Sign Out</span></button> -->
-  <div class="navbar-item">
+  <!-- <div class="navbar-item">
     <WelcomeName />
-  </div>
+  </div> -->
   <div>
     <a class="button is-primary is-light  is-outlined" @click="logoutPopup">Sign out
       Microsoft account &nbsp; <i class="mdi mdi-logout"></i></a>
