@@ -41,6 +41,7 @@ const loadAsyncData = () => {
     // /api/bookings
 
     fetch(`/api/bookings?${params}`, {
+        credentials: 'include',
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('msalToken')}`
         }
