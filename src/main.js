@@ -34,7 +34,7 @@ const i18n = createI18n({
     // ...
 })
 
-await msalInstance.initialize();
+msalInstance.initialize();
 
 createApp(App).use(router).use(msalPlugin, msalInstance).use(Oruga, bulmaConfig).use(VueApexCharts)
     .use(i18n).component('vue-navigation-bar', VueNavigationBar).mount('#app')
