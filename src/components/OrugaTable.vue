@@ -36,7 +36,9 @@ const loadAsyncData = () => {
     }
 
     loading.value = true
-    alert(localStorage.getItem('msalToken'))
+    // alert(localStorage.getItem('msalToken'))
+
+    // /api/bookings
 
     fetch(`/api/bookings?${params}`, {
         headers: {
@@ -61,6 +63,8 @@ const loadAsyncData = () => {
             // while (data.value.length < 10) {
             //     data.value.push({})
             // }
+
+            console.log(JSON.stringify(result))
 
             loading.value = false
         })
