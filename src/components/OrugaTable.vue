@@ -41,11 +41,12 @@ const loadAsyncData = () => {
     // /api/bookings
 
     fetch(`/api/bookings?${params}`, {
-        credentials: 'include',
+        // credentials: 'include',
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('msalToken')}`,
-            "Sec-Fetch-Mode":"cors",
-                "Sec-Fetch-Site":"cross-site"
+            'X-Custom-Authorization': `Bearer ${localStorage.getItem('msalToken')}`,
+            // "Sec-Fetch-Mode":"cors",
+            //     "Sec-Fetch-Site":"cross-site"
         }
     })
         .then((response) => response.json())
