@@ -47,8 +47,8 @@ watch(result, () => {
     localStorage.setItem('canSeeOne', true);
   }
 
-  alert(JSON.stringify(result.value.accessToken))
-  alert(JSON.stringify(result.value))
+  // alert(JSON.stringify(result.value.accessToken))
+  // alert(JSON.stringify(result.value))
   location.assign('/bookings')
 });
 </script>

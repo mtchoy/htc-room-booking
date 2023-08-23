@@ -36,17 +36,12 @@ const loadAsyncData = () => {
     }
 
     loading.value = true
-    alert(localStorage.getItem('msalToken'))
-
-    // /api/bookings
 
     fetch(`/api/bookings?${params}`, {
-        // credentials: 'include',
+
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('msalToken')}`,
-            'X-Custom-Authorization': `Bearer ${localStorage.getItem('msalToken')}`,
-            // "Sec-Fetch-Mode":"cors",
-            //     "Sec-Fetch-Site":"cross-site"
+            'X-Custom-Authorization': `Bearer ${localStorage.getItem('msalToken')}`
         }
     })
         .then((response) => response.json())

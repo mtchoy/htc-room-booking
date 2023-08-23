@@ -16,7 +16,6 @@ import SignOutButton from "./SignOutButton.vue";
 
 const isAuthenticated = useIsAuthenticated();
 
-
 defineProps({
   msg: String,
 })
