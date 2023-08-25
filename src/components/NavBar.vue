@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useMsal } from '../composition-api/useMsal';
-import brandImage from '../assets/cdnlogo.com_holy-trinity-college-4.svg'
+import brandImage from '../assets/Holy-Trinity-College-logo-vector-01.svg'
 
 defineProps({
     msg: String,
@@ -28,28 +28,13 @@ const name = computed(() => {
     return "";
 });
 
-// const logoutPopup = () => {
-//     alert("logoutPopup");
-//   instance.logoutPopup({
-//     mainWindowRedirectUri: "/"
-//   });
-// }
-
-// const test = (text) => {
-//     alert("in test");
-//     if (text == "Welcome, " + name.value) {
-//         alert("in if")
-//         logoutPopup();
-//     }
-// }
-
 const navbarOptions = {
     elementId: "main-navbar",
     isUsingVueRouter: true,
     mobileBreakpoint: 992,
     brandImagePath: "./",
     brandImage,
-    brandImageAltText: "brand-image",
+    brandImageAltText: "HTC Room Booking System",
     collapseButtonOpenColor: "#661c23",
     collapseButtonCloseColor: "#661c23",
     showBrandImageInMobilePopup: true,
@@ -117,19 +102,19 @@ const navbarOptions = {
         //     ]
         // },
         {
-            type: "link",
+            type: "button",
             text: "New Booking",
             path: { name: "new-booking" },
             iconRight: '<i class="fa fa-long-arrow-right fa-fw"></i>',
         },
         {
-            type: "link",
+            type: "button",
             text: "Bookings",
             path: { name: "booking-list" },
             iconRight: '<i class="fa fa-long-arrow-right fa-fw"></i>',
         },
         {
-            type: "link",
+            type: "button",
             text: "Search by Date",
             // path: { name: "chart-view", params: { mode: 1 } },
             path: '/chart-view/1',
@@ -137,7 +122,7 @@ const navbarOptions = {
         },
         {
             isLinkAction: true,
-            type: "link",
+            type: "button",
             text: "Search by Room",
             // path: { name: "chart-view", params: { mode: 1 } },
             path: '/chart-view/2',
@@ -173,7 +158,7 @@ const navbarOptions = {
 </script>
 
 <template>
-    <vue-navigation-bar :options="navbarOptions" />
+    <vue-navigation-bar :options="navbarOptions" style="background-color: lightgray;" v-if="name"/>
     <!-- <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="https://bulma.io">

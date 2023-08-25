@@ -40,6 +40,11 @@ const router = createRouter({
       name: 'redirect-view',
       component: () => import('../views/RedirectView.vue'),
     },
+    {
+      path: '/logout',
+      name: 'logout-view',
+      component: () => import('../views/Logout.vue'),
+    },
   ],
 });
 

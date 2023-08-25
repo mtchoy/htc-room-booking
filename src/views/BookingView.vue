@@ -91,7 +91,8 @@ const submitForm = async function () {
         method: "post",
         headers: {
             'Content-Type': 'application/json',    
-            'Authorization': `Bearer ${localStorage.getItem('msalToken')}`
+            'Authorization': `Bearer ${localStorage.getItem('msalToken')}`,
+            'X-Custom-Authorization': `Bearer ${localStorage.getItem('msalToken')}`
         },
         body: JSON.stringify(postData)
     });
@@ -121,7 +122,8 @@ const fetchThisBooking = async function () {
 
     var response = await fetch(`/api/bookings/${id}`, {
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('msalToken')}`
+            'Authorization': `Bearer ${localStorage.getItem('msalToken')}`,
+            'X-Custom-Authorization': `Bearer ${localStorage.getItem('msalToken')}`
         }
     });
 
@@ -155,7 +157,8 @@ const changeStatus = async function (newStatus) {
         method: 'put',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('msalToken')}`
+            'Authorization': `Bearer ${localStorage.getItem('msalToken')}`,
+            'X-Custom-Authorization': `Bearer ${localStorage.getItem('msalToken')}`
             // 'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: JSON.stringify(booking.value)
@@ -188,7 +191,8 @@ const fileChanged = async function () {
         var response = await fetch("/api/upload", {
             method: "POST",
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('msalToken')}`
+                'Authorization': `Bearer ${localStorage.getItem('msalToken')}`,
+                'X-Custom-Authorization': `Bearer ${localStorage.getItem('msalToken')}` 
             },
             body: formData
         });
@@ -221,7 +225,8 @@ const withdraw = function () {
             var response = await fetch("/api/bookings/" + id, {
                 method: 'delete',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('msalToken')}`
+                    'Authorization': `Bearer ${localStorage.getItem('msalToken')}`,
+                    'X-Custom-Authorization': `Bearer ${localStorage.getItem('msalToken')}`
                 } 
             });
 

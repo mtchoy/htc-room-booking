@@ -10,16 +10,16 @@ import { loginRequest } from "../authConfig";
 
 // const isSwitchedCustom = ref("My Bookings")
 
-onMounted(() => {
-  alert("onMounted")
-  // alert(localStorage.getItem("isSwitchedCustom"))
-  // isSwitchedCustom.value = localStorage.getItem("isSwitchedCustom")
-  // alert(isSwitchedCustom.value)
-  if (isAuthenticated) {
-    // loadAsyncData(result.value.accessToken).catch(() => acquireToken());
-    acquireToken();
-  }
-})
+// onMounted(() => {
+//   // alert("onMounted")
+//   // alert(localStorage.getItem("isSwitchedCustom"))
+//   // isSwitchedCustom.value = localStorage.getItem("isSwitchedCustom")
+//   // alert(isSwitchedCustom.value)
+//   if (isAuthenticated) {
+//     // loadAsyncData(result.value.accessToken).catch(() => acquireToken());
+//     acquireToken();
+//   }
+// })
 
 const isAuthenticated = useIsAuthenticated();
 
@@ -30,6 +30,7 @@ const { result, acquireToken } = useMsalAuthentication(InteractionType.Redirect,
 watch(isAuthenticated, (isAuthenticated) => {
   if (isAuthenticated) {
     // loadAsyncData(result.value.accessToken).catch(() => acquireToken());
+    // alert("here")
     acquireToken();
   }
 });
@@ -41,10 +42,19 @@ watch(result, () => {
   localStorage.setItem('msalAccount', JSON.stringify(result.value.account));
   localStorage.setItem('msalToken', result.value.accessToken);
 
-  if (result.value.account.idTokenClaims.groups.includes('f6f8e7d4-647a-434f-86d6-3949165d955f')) {
-    localStorage.setItem('canApprove', true);
-    localStorage.setItem('canSeeAll', true);
-    localStorage.setItem('canSeeOne', true);
+  if (result.value.account.idTokenClaims.preferred_username.split('@')[1] != 'htc.edu.hk' ) {
+    alert("Please use HTC account to login.")
+    localStorage.clear();
+    location.assign('/')
+    return;
+  }
+
+  if (result.value.account.idTokenClaims.groups) {
+    if (result.value.account.idTokenClaims.groups.includes('f6f8e7d4-647a-434f-86d6-3949165d955f')) {
+      localStorage.setItem('canApprove', true);
+      localStorage.setItem('canSeeAll', true);
+      localStorage.setItem('canSeeOne', true);
+    }
   }
 
   // alert(JSON.stringify(result.value.accessToken))
@@ -54,11 +64,11 @@ watch(result, () => {
 </script>
 
 <template>
-    loading...
+  loading...
 </template>
 
 <style scoped>
 .read-the-docs {
-    color: #888;
+  color: #888;
 }
 </style>

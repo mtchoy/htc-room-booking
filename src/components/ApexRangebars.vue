@@ -109,7 +109,8 @@ const fetchSlots = async (startISOString, hiddenGroup) => {
 
     var response = await fetch(`/api/timeslots?date=${startISOString}${roomParams}`, {
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('msalToken')}`
+            'Authorization': `Bearer ${localStorage.getItem('msalToken')}`,
+            'X-Custom-Authorization': `Bearer ${localStorage.getItem('msalToken')}`
         }
     });
 

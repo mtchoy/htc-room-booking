@@ -54,7 +54,8 @@ const timeslots = ref([]);
 const fetchDate = async function () {
     var response = await fetch(`/api/timeslots/bookings?date=${date.value}`, {
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('msalToken')}`
+            'Authorization': `Bearer ${localStorage.getItem('msalToken')}`,
+            'X-Custom-Authorization': `Bearer ${localStorage.getItem('msalToken')}`
         }
     });
 
