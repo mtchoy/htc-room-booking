@@ -60,6 +60,7 @@ const bearerStrategy = new passportAzureAd.BearerStrategy({
      */
 
     var rights = {
+        username: token.preferred_username.split('@')[0],
         canApprove: false,
         canSeeList: false,
         canSeeOne: false,

@@ -77,13 +77,14 @@ router.post('/', async (req, res) => {
 
         if (matched) return res.status(409).json({ message: 'At least one timeslot is not available.' });
 
-        if (req.user.canApprove || (room == "Rm514" && !/^s\d{6}$/.test(req.user.name.toLowerCase())))
+        // teacher can book
+        if (req.user.canApprove || (room == "Rm514" && !/^s\d{6}$/.test(req.user.username.toLowerCase())))
             req.body.status = "Approved";
         else {
             req.body.status = "Pending";
         }
 
-        req.body.username = req.user.name;
+        req.body.username = req.user.username;
         req.body.createdAt = new Date();
         req.body.updatedAt = new Date();
 
@@ -118,7 +119,7 @@ router.get('/', async (req, res) => {
         }
     } else {
         // query.userId = new ObjectId(req.user._id);
-        query.username = req.user.name;
+        query.username = req.user.username;
     }
 
     // delete query.userId;
@@ -163,7 +164,7 @@ router.get('/:id', async (req, res) => {
             return res.status(404).json({ message: 'Booking not found' });
         }
 
-        if (result.username !== req.user.name && !req.user.canSeeOne) {
+        if (result.username !== req.user.username && !req.user.canSeeOne) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
 
@@ -230,7 +231,7 @@ router.delete('/:id', async (req, res) => {
             return res.status(404).json({ message: 'Booking not found' });
         }
 
-        if (booking.username !== req.user.name && !req.user.canApprove) {
+        if (booking.username !== req.user.username && !req.user.canApprove) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
 
