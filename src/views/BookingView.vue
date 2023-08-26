@@ -45,7 +45,7 @@ const isImageModalActive = ref(false);
 // const isReading = ref("<%= action %>" == "read");
 const isReading = ref(id ? true : false);
 // const canBook = ref("<%= (!req.session.canBook) %>" == "false");
-const canReview = ref(true);
+const canReview = ref(localStorage.getItem("canReview") == "true");
 const canApprove = ref(localStorage.getItem("canApprove") == "true");
 const selectedRoom = ref({})
 
@@ -90,7 +90,7 @@ const submitForm = async function () {
     var response = await fetch("/api/bookings/", {
         method: "post",
         headers: {
-            'Content-Type': 'application/json',    
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('msalToken')}`,
             'X-Custom-Authorization': `Bearer ${localStorage.getItem('msalToken')}`
         },
@@ -192,7 +192,7 @@ const fileChanged = async function () {
             method: "POST",
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('msalToken')}`,
-                'X-Custom-Authorization': `Bearer ${localStorage.getItem('msalToken')}` 
+                'X-Custom-Authorization': `Bearer ${localStorage.getItem('msalToken')}`
             },
             body: formData
         });
@@ -227,7 +227,7 @@ const withdraw = function () {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('msalToken')}`,
                     'X-Custom-Authorization': `Bearer ${localStorage.getItem('msalToken')}`
-                } 
+                }
             });
 
             if (response.ok) {
@@ -334,24 +334,20 @@ onMounted(() => {
                 </o-field>
 
                 <o-field :label="t('message.recurrent')" class="column">
-                    <o-radio v-model="booking.recurrent" native-value="0" v-if="!isReading">
+                    <o-radio v-model="booking.recurrent" native-value="0" :disabled="isReading">
                         <o-icon icon="calendar-today"></o-icon>
                         <span>{{ t('message.once') }}</span>
                     </o-radio>
 
-                    <o-radio v-model="booking.recurrent" native-value="1" v-if="!isReading">
+                    <o-radio v-model="booking.recurrent" native-value="1" :disabled="isReading">
                         <o-icon icon="calendar-week"></o-icon>
                         <span>{{ t('message.daily') }}</span>
                     </o-radio>
 
-                    <o-radio v-model="booking.recurrent" native-value="7" v-if="!isReading">
+                    <o-radio v-model="booking.recurrent" native-value="7" :disabled="isReading">
                         <o-icon icon="calendar-week-begin"></o-icon>
                         <span>{{ t('message.weekly') }}</span>
                     </o-radio>
-                    <o-input v-model="booking.recurrent" v-if="isReading" readonly>
-                    </o-input>
-                    <!-- <o-input v-model="zhRecurrent" v-if="locale == 'zh'" readonly>
-                                                                </o-input> -->
                 </o-field>
 
                 <o-field class="column" :label="t('message.repeatedTimes')">
@@ -541,14 +537,15 @@ onMounted(() => {
                     <button class="button is-link is-danger" type="button" @click="changeStatus('Rejected')"
                         v-if="isReading && canApprove && booking.status != 'Rejected'">Reject</button>
                     <!-- <button class="button is-dark" type="button" @click="" v-if="isReading && canReview">Print</button> -->
-                    <button class="button is-dark" @click="locale = 'zh'" v-if="isReading && canReview" v-print="printObj" >Print</button>
+                    <button class="button is-dark" @click="locale = 'zh'" v-if="isReading && canReview"
+                        v-print="printObj">Print</button>
                 </div>
             </div>
 
         </div>
-        
+
         <!-- <div id="loading" v-show="printLoading"></div> -->
-        
+
         <div class="container column is-full" v-if="locale == 'zh' && booking.imageUri">
             <img :src="booking.imageUri" />
         </div>
