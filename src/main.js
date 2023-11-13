@@ -9,9 +9,6 @@ import { bulmaConfig } from '@oruga-ui/theme-bulma'
 import '@oruga-ui/theme-bulma/dist/bulma.css'
 import '@mdi/font/css/materialdesignicons.min.css';
 
-import VueNavigationBar from 'vue-navigation-bar';
-import 'vue-navigation-bar/dist/vue-navigation-bar.css';
-
 import VueApexCharts from "vue3-apexcharts";
 
 import { msalPlugin } from "./plugins/msalPlugin";
@@ -37,6 +34,6 @@ const i18n = createI18n({
 msalInstance.initialize();
 
 createApp(App).use(router).use(msalPlugin, msalInstance).use(Oruga, bulmaConfig).use(VueApexCharts)
-    .use(i18n).component('vue-navigation-bar', VueNavigationBar).mount('#app')
+    .use(i18n).mount('#app')
 
 
