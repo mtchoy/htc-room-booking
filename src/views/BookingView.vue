@@ -45,8 +45,8 @@ const isImageModalActive = ref(false);
 // const isReading = ref("<%= action %>" == "read");
 const isReading = ref(id ? true : false);
 // const canBook = ref("<%= (!req.session.canBook) %>" == "false");
-const canReview = ref(localStorage.getItem("canReview") == "true");
-const canApprove = ref(localStorage.getItem("canApprove") == "true");
+const canReview = inject("canReview");
+const canApprove = inject("canApprove");
 const selectedRoom = ref({})
 
 const { oruga } = useProgrammatic()

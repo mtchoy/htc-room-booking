@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, inject } from 'vue'
 import { version } from "../../package.json";
 import { useIsAuthenticated } from '../composition-api/useIsAuthenticated';
 
@@ -14,7 +14,7 @@ defineProps({
 
 // const count = ref(0)
 
-const canSeeAll = ref(localStorage.getItem("canSeeAll") == "true");
+const canSeeAll = inject("canSeeAll")
 
 </script>
 
