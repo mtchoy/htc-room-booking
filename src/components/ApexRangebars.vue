@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, toRaw } from 'vue'
+import { ref, onMounted, watch, toRaw, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { addDays, addHours, addMinutes, startOfMonth, startOfDay, formatISO9075 } from 'date-fns'
 
@@ -83,7 +83,7 @@ const buildChart = async () => {
         }
     } else {
         var start = startOfDay(props.date)
-        const rooms = JSON.parse(localStorage.getItem("rooms"));
+        const rooms = inject('rooms');
         hiddenGroup = rooms.map(room => ({ x: room }))
     }
 
