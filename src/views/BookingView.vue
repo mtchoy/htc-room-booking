@@ -27,7 +27,7 @@ const booking = ref({
     choirChairs: 0
 });
 
-const rooms = ref(inject(rooms) || []);
+const rooms = ref(inject('rooms'));
 // const date = ref(new Date(new Date().setHours(0, 0, 0, 0)));
 const minDate = ref(addBusinessDays(new Date(), 2));
 const maxDate = ref(addYears(new Date(), 2));
