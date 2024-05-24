@@ -7,7 +7,7 @@ if (!process.env.MONGODB_URI) {
 
 // Connect to MongoDB
 async function connectToDB() {
-    const client = await MongoClient.connect(process.env.MONGODB_URI, { useUnifiedTopology: true });
+    const client = await MongoClient.connect(process.env.MONGODB_URI);
     const db = client.db('room-booking');
     db.client = client;
     return db;

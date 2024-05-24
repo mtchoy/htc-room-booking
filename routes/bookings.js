@@ -159,7 +159,7 @@ router.get('/:id', async (req, res) => {
     const db = await connectToDB();
     try {
         const result = await db.collection('booking').findOne({ _id: new ObjectId(id) });
-
+        
         if (!result) {
             return res.status(404).json({ message: 'Booking not found' });
         }
