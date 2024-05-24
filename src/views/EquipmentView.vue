@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, inject } from 'vue'
 import { useRoute } from 'vue-router'
 import { addDays, addMonths, addHours, addMinutes } from 'date-fns'
 // import ApexRangebars from '../components/ApexRangebars.vue'
@@ -13,7 +13,7 @@ const { t, locale } = useI18n({
 // const count = ref(0)
 const route = useRoute()
 const canReview = ref(false);
-const rooms = ref(JSON.parse(localStorage.getItem("rooms")));
+const rooms = ref(inject('rooms'));
 const room = ref('');
 const minDate = ref(new Date(new Date().getFullYear() - 80, new Date().getMonth(), new Date().getDate()));
 const maxDate = ref(new Date(new Date().getFullYear() + 18, new Date().getMonth(), new Date().getDate()));

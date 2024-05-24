@@ -1,6 +1,6 @@
 <script setup>
 // import HelloWorld from '../components/HelloWorld.vue'
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, inject } from 'vue';
 import { useRoute } from 'vue-router';
 import { addBusinessDays, addYears, setHours, formatISO9075 } from 'date-fns'
 import { useI18n } from 'vue-i18n'
@@ -27,7 +27,7 @@ const booking = ref({
     choirChairs: 0
 });
 
-const rooms = ref(JSON.parse(localStorage.getItem("rooms") || []));
+const rooms = ref(inject(rooms) || []);
 // const date = ref(new Date(new Date().setHours(0, 0, 0, 0)));
 const minDate = ref(addBusinessDays(new Date(), 2));
 const maxDate = ref(addYears(new Date(), 2));
