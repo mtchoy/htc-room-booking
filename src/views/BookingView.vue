@@ -57,6 +57,8 @@ const { oruga } = useProgrammatic()
 
 watch(() => booking.value.room, async () => {
 
+    alert(canApprove.value);
+
     if (!isReading.value) {
         booking.value.wirelessMic = 0;
         booking.value.microphoneStand = 0;
