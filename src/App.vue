@@ -2,6 +2,8 @@
 import NavBar from './components/NavBar.vue'
 import { ref, provide } from 'vue';
 
+alert("App.vue")
+
 const canApprove = ref(false)
 
 function updateApprove(bool) {
