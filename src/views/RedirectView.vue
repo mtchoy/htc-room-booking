@@ -60,15 +60,17 @@ watch(result, () => {
 
       const { canApprove, updateApprove } = inject('canApprove')
 
+      alert("rv" + canApprove.value)
+
       updateApprove(true)
-      inject('canSeeAll').value = true
-      inject('canSeeOne').value = true
+      // inject('canSeeAll').value = true
+      // inject('canSeeOne').value = true
     }
   }
 
   // alert(JSON.stringify(result.value.accessToken))
   // alert(JSON.stringify(result.value))
-  location.assign('/bookings')
+  // location.assign('/bookings')
 });
 </script>
 
