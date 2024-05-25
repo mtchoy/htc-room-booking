@@ -24,6 +24,7 @@ import { loginRequest } from "../authConfig";
 const isAuthenticated = useIsAuthenticated();
 
 const { result, acquireToken } = useMsalAuthentication(InteractionType.Redirect, loginRequest);
+const { canApprove, updateApprove } = inject('canApprove');
 
 // const canSeeAll = ref(localStorage.getItem("canSeeAll") == "true");
 
@@ -58,7 +59,7 @@ watch(result, () => {
     if (result.value.account.idTokenClaims.groups.includes('f6f8e7d4-647a-434f-86d6-3949165d955f')) {
       alert("in group");
 
-      const { canApprove, updateApprove } = inject('canApprove')
+      
 
       alert("rv" + canApprove.value)
 
