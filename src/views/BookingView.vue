@@ -57,7 +57,7 @@ const { oruga } = useProgrammatic()
 
 watch(() => booking.value.room, async () => {
 
-    alert(canApprove.value);
+    alert("bv: " + canApprove.value);
 
     if (!isReading.value) {
         booking.value.wirelessMic = 0;
@@ -291,6 +291,8 @@ const printObj = {
 };
 
 onMounted(() => {
+    alert("bv mounted: " + canApprove.value);
+
     if (isReading.value) {
         fetchThisBooking();
     }
