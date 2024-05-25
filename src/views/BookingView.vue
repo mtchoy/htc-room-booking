@@ -46,7 +46,9 @@ const isImageModalActive = ref(false);
 const isReading = ref(id ? true : false);
 // const canBook = ref("<%= (!req.session.canBook) %>" == "false");
 const canReview = inject("canReview");
-const canApprove = inject("canApprove");
+
+const { canApprove, updateApprove } = inject('canApprove')
+// const canApprove = inject("canApprove");
 const selectedRoom = ref({})
 
 alert(canApprove.value);

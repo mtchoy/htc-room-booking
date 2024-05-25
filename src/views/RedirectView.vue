@@ -57,7 +57,10 @@ watch(result, () => {
   if (result.value.account.idTokenClaims.groups) {
     if (result.value.account.idTokenClaims.groups.includes('f6f8e7d4-647a-434f-86d6-3949165d955f')) {
       alert("in group");
-      inject('canApprove').value = true
+
+      const { canApprove, updateApprove } = inject('canApprove')
+
+      updateApprove(true)
       inject('canSeeAll').value = true
       inject('canSeeOne').value = true
     }
