@@ -6,6 +6,7 @@ const canApprove = ref(false)
 
 function updateApprove(bool) {
     canApprove.value = bool
+    alert(canApprove.value)
 }
 
 provide('rooms', ["Hall", "CvrdPlayGndEnt", "CvrdPlayGndMir", "CvrdPlayGndAnnex", "RdgCor", "MusicRm", "ConfRm1F",
