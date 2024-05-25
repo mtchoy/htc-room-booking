@@ -49,6 +49,8 @@ const canReview = inject("canReview");
 const canApprove = inject("canApprove");
 const selectedRoom = ref({})
 
+alert(canApprove.value);
+
 const { oruga } = useProgrammatic()
 
 watch(() => booking.value.room, async () => {
