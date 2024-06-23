@@ -2,13 +2,11 @@
 import NavBar from './components/NavBar.vue'
 import { ref, onMounted, provide } from 'vue';
 
-alert("App.vue")
-
 const canApprove = ref(false)
 
 function updateApprove(bool) {
     canApprove.value = bool
-    alert(canApprove.value)
+    // alert(canApprove.value)
 }
 
 onMounted(() => {
