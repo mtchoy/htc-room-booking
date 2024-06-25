@@ -7,32 +7,6 @@ import { useI18n } from 'vue-i18n'
 import { useProgrammatic } from '@oruga-ui/oruga-next'
 import vPrint from 'vue3-print-nb'
 
-import { useMsalAuthentication } from "../composition-api/useMsalAuthentication";
-import { InteractionType } from "@azure/msal-browser";
-// import { reactive, watch } from 'vue'
-import { loginRequest } from "../authConfig";
-// import { callMsGraph } from "../utils/MsGraphApiCall";
-// import UserInfo from "../utils/UserInfo";
-
-const { result, acquireToken } = useMsalAuthentication(InteractionType.Redirect, loginRequest);
-
-const data = ref(null);
-
-async function updateData() {
-    if (result.value.accessToken) {
-        // const apiResult = await callAPI(result.value.accessToken).catch(() => acquireToken());
-        // data.value = apiResult;
-        // alert(result.value.account.idTokenClaims.groups)
-    }
-}
-
-updateData();
-
-watch(result, () => {
-    // Fetch new data from the API each time the result changes (i.e. a new access token was acquired)
-    updateData();
-});
-
 const { t, locale } = useI18n({
     inheritLocale: true,
     useScope: 'local'
@@ -71,19 +45,13 @@ const isImageModalActive = ref(false);
 // const isReading = ref("<%= action %>" == "read");
 const isReading = ref(id ? true : false);
 // const canBook = ref("<%= (!req.session.canBook) %>" == "false");
-const canReview = inject("canReview");
-
-const { canApprove, updateApprove } = inject('canApprove')
-// const canApprove = inject("canApprove");
+const canReview = ref(localStorage.getItem("canReview") == "true");
+const canApprove = ref(localStorage.getItem("canApprove") == "true");
 const selectedRoom = ref({})
-
-// alert(canApprove.value);
 
 const { oruga } = useProgrammatic()
 
 watch(() => booking.value.room, async () => {
-
-    // alert("bv: " + canApprove.value);
 
     if (!isReading.value) {
         booking.value.wirelessMic = 0;

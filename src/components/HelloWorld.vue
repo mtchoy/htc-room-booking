@@ -14,7 +14,7 @@ defineProps({
 
 // const count = ref(0)
 
-const canSeeAll = inject("canSeeAll")
+const canSeeAll = ref(localStorage.getItem("canSeeAll") == "true");
 
 </script>
 

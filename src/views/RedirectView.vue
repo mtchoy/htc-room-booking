@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, inject } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useIsAuthenticated } from '../composition-api/useIsAuthenticated';
 import { useMsalAuthentication } from "../composition-api/useMsalAuthentication";
 import { InteractionType } from "@azure/msal-browser";
@@ -24,7 +24,6 @@ import { loginRequest } from "../authConfig";
 const isAuthenticated = useIsAuthenticated();
 
 const { result, acquireToken } = useMsalAuthentication(InteractionType.Redirect, loginRequest);
-const { canApprove, updateApprove } = inject('canApprove');
 
 // const canSeeAll = ref(localStorage.getItem("canSeeAll") == "true");
 
@@ -43,13 +42,8 @@ watch(result, () => {
   localStorage.setItem('msalAccount', JSON.stringify(result.value.account));
   localStorage.setItem('msalToken', result.value.accessToken);
 
-  if (result.value.account.idTokenClaims.preferred_username.split('@')[1] != 'htc.edu.hk') {
+  if (result.value.account.idTokenClaims.preferred_username.split('@')[1] != 'htc.edu.hk' ) {
     alert("Please use HTC account to login.")
-
-    inject('canApprove').value = false
-    inject('canSeeAll').value = false
-    inject('canSeeOne').value = false
-
     localStorage.clear();
     location.assign('/')
     return;
@@ -57,21 +51,21 @@ watch(result, () => {
 
   if (result.value.account.idTokenClaims.groups) {
     if (result.value.account.idTokenClaims.groups.includes('f6f8e7d4-647a-434f-86d6-3949165d955f')) {
-      // alert("in group");
-
-      updateApprove(true)
-      // alert("rv" + canApprove.value)
-
-      // inject('canSeeAll').value = true
-      // inject('canSeeOne').value = true
+      localStorage.setItem('canApprove', true);
+      localStorage.setItem('canSeeAll', true);
+      localStorage.setItem('canSeeOne', true);
+    } else if (result.value.account.idTokenClaims.groups.includes('ab785f76-33a5-4562-83f0-438a0287b95b')) {
+      localStorage.setItem('canSeeAll', true);
+      localStorage.setItem('canSeeOne', true);
+      alert("I'm a teacher")
+    } else {
+      localStorage.setItem('canSeeOne', true);
     }
   }
 
-  location.assign('/bookings')
-
   // alert(JSON.stringify(result.value.accessToken))
   // alert(JSON.stringify(result.value))
-  // location.assign('/bookings')
+  location.assign('/bookings')
 });
 </script>
 
