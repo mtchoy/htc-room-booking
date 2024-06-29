@@ -10,7 +10,7 @@ const props = defineProps({
 })
 
 const router = useRouter()
-const canReview = ref(localStorage.getItem("canReview") == "true");
+var canReview = ref(localStorage.getItem("role") == "admin" || localStorage.getItem("role") == "officer" || localStorage.getItem("role") == "teacher");
 
 const options = ref({
     plotOptions: {

@@ -6,7 +6,7 @@ import ApexRangebars from '../components/ApexRangebars.vue'
 
 // const count = ref(0)
 const route = useRoute()
-const canReview = ref(false);
+const canReview = ref(localStorage.getItem("role") == "admin" || localStorage.getItem("role") == "officer" || localStorage.getItem("role") == "teacher");
 const rooms = ref(inject('rooms'));
 const room = ref(route.params.mode == 1 ? '' : 'Hall');
 const minDate = ref(new Date(new Date().getFullYear() - 80, new Date().getMonth(), new Date().getDate()));

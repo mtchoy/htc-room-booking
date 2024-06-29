@@ -12,7 +12,7 @@ const { t, locale } = useI18n({
 
 // const count = ref(0)
 const route = useRoute()
-const canReview = ref(false);
+const canReview = ref(localStorage.getItem("role") == "admin" || localStorage.getItem("role") == "officer")
 const rooms = ref(inject('rooms'));
 const room = ref('');
 const minDate = ref(new Date(new Date().getFullYear() - 80, new Date().getMonth(), new Date().getDate()));

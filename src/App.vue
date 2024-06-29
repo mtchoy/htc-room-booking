@@ -6,9 +6,6 @@ provide('rooms', ["Hall", "CvrdPlayGndEnt", "CvrdPlayGndMir", "CvrdPlayGndAnnex"
     "Rm105", "Rm106", "Rm107", "Rm111", "Rm112", "Rm201", "Rm202", "Rm203", "Rm204", "Rm205", "Rm206",
     "Rm207", "Rm208", "Rm209", "Rm211", "Rm212", "Rm301", "Rm302", "Rm303", "Rm304", "Rm305", "Rm306",
     "Rm311", "Rm312", "Rm405", "Rm411", "Rm412", "Rm414", "Rm418", "Rm419", "Rm501", "Rm504"])
-provide('canApprove', false)
-provide('canSeeAll', false)
-provide('canSeeOne', false)
 </script>
 
 <template>

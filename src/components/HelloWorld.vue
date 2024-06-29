@@ -14,7 +14,7 @@ defineProps({
 
 // const count = ref(0)
 
-const canSeeAll = ref(localStorage.getItem("canSeeAll") == "true");
+const canSeeAll = ref(localStorage.getItem("role") == "admin" || localStorage.getItem("role") == "officer");
 
 </script>
 

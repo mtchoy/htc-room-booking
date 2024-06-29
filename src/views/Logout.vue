@@ -2,9 +2,6 @@
 import { onMounted, inject } from 'vue'
 
 onMounted(() => {
-  inject('canApprove').value = false
-  inject('canSeeAll').value = false
-  inject('canSeeOne').value = false
   localStorage.clear();
   location.assign('/')
 });

@@ -42,29 +42,24 @@ watch(result, () => {
   localStorage.setItem('msalAccount', JSON.stringify(result.value.account));
   localStorage.setItem('msalToken', result.value.accessToken);
 
-  if (result.value.account.idTokenClaims.preferred_username.split('@')[1] != 'htc.edu.hk' ) {
+  if (result.value.account.idTokenClaims.preferred_username.split('@')[1] != 'htc.edu.hk') {
     alert("Please use HTC account to login.")
     localStorage.clear();
     location.assign('/')
     return;
   }
 
+  localStorage.setItem('role', 'student')
+
   if (result.value.account.idTokenClaims.groups) {
     if (result.value.account.idTokenClaims.groups.includes('f6f8e7d4-647a-434f-86d6-3949165d955f')) {
-      localStorage.setItem('canApprove', true);
-      localStorage.setItem('canSeeAll', true);
-      localStorage.setItem('canSeeOne', true);
+      localStorage.setItem('role', 'admin');
+    } else if (result.value.account.idTokenClaims.groups.includes('54b58a85-c262-417b-ae80-4181067b3509')) {
+      localStorage.setItem('role', 'officer');
     } else if (result.value.account.idTokenClaims.groups.includes('ab785f76-33a5-4562-83f0-438a0287b95b')) {
-      localStorage.setItem('canSeeAll', true);
-      localStorage.setItem('canSeeOne', true);
-      alert("I'm a teacher")
-    } else {
-      localStorage.setItem('canSeeOne', true);
+      localStorage.setItem('role', 'teacher');
     }
   }
-
-  // alert(JSON.stringify(result.value.accessToken))
-  // alert(JSON.stringify(result.value))
   location.assign('/bookings')
 });
 </script>
