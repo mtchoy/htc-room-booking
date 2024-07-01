@@ -1,4 +1,4 @@
-const { EmailClient } = require("@azure/communication-email");
+const { EmailClient, KnownEmailSendStatus } = require("@azure/communication-email");
 require("dotenv").config();
 
 // This code demonstrates how to fetch your connection string
@@ -56,7 +56,7 @@ async function sendEmail(booking) {
     }
 }
 
-function buildValueContent(key, value) {
+function buildValueContent(key, value, booking) {
     if (key === "startTime" || key === "endTime" || key === "updatedAt" || key === "fd") {
         return "";
     }
@@ -77,7 +77,7 @@ function buildEmailContent(context) {
         }
         return `<tr>
                     <td>${key}</td>
-                    <td>${buildValueContent(key, value)}</td>
+                    <td>${buildValueContent(key, value, context)}</td>
                 </tr>`;
     }).join("");
 

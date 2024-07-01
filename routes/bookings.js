@@ -207,9 +207,16 @@ router.put('/:id', async (req, res) => {
     const db = await connectToDB();
     try {
         const result = await db.collection('booking').updateOne({ _id: new ObjectId(id) }, { $set: { status, updatedAt } });
-        await db.collection('timeslot').updateMany({ booking: new ObjectId(id) }, { $set: { status, updatedAt } });
 
-        sendEmail(result);
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        await db.collection('timeslot').updateMany({ booking: new ObjectId(id) }, { $set: { status, updatedAt } });
+        
+        // send email
+        const booking = await db.collection('booking').findOne({ _id: new ObjectId(id) });
+        sendEmail(booking);
 
         res.status(200).json({ message: 'Booking status updated successfully' });
     } catch (err) {
