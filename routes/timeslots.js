@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const { addDays } = require('date-fns')
+const { addDays, parseISO } = require('date-fns')
 // const checkToken = require('../middlewares/checkToken');
 const { connectToDB, ObjectId } = require('../utils/db');
 
@@ -15,7 +15,8 @@ router.get('/', async (req, res) => {
         return;
     }
 
-    var startDate = new Date(date);
+    // var startDate = new Date(date);
+    var startDate = parseISO(date);
     const query = { startTime: { $gt: startDate } };
 
     if (room) {
@@ -76,9 +77,9 @@ router.get('/bookings', async (req, res) => {
                 }
             },
             {
-                $sort: { 
+                $sort: {
                     room: 1,
-                    startTime: 1 
+                    startTime: 1
                 }
             }
         ]
