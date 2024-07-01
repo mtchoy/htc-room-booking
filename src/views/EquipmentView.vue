@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, onMounted, inject } from 'vue'
 import { useRoute } from 'vue-router'
-import { addDays, addMonths, addHours, addMinutes, startOfToday } from 'date-fns'
+import { addDays, addMonths, addHours, addMinutes, startOfToday, formatISO9075 } from 'date-fns'
 // import ApexRangebars from '../components/ApexRangebars.vue'
 import { useI18n } from 'vue-i18n'
 
@@ -50,7 +50,10 @@ watch(() => date.value, () => {
 const timeslots = ref([]);
 
 const fetchDate = async function () {
-    var response = await fetch(`/api/timeslots/bookings?date=${date.value}`, {
+
+    var d = formatISO9075(date.value, { representation: 'date' })
+
+    var response = await fetch(`/api/timeslots/bookings?date=${d}`, {
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('msalToken')}`,
             'X-Custom-Authorization': `Bearer ${localStorage.getItem('msalToken')}`
