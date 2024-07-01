@@ -53,7 +53,8 @@ router.get('/bookings', async (req, res) => {
         return;
     }
 
-    var startDate = new Date(date);
+    // var startDate = new Date(date);
+    var startDate = parseISO(date);
     var endDate = addDays(startDate, 1)
 
     // var startDate = new Date();
