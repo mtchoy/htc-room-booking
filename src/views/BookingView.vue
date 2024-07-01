@@ -15,8 +15,15 @@ const { t, locale } = useI18n({
 const route = useRoute()
 const id = route.params.id;
 
+// const isReading = ref("<%= action %>" == "read");
+const isReading = ref(id ? true : false);
+// const canBook = ref("<%= (!req.session.canBook) %>" == "false");
+const canReview = ref(localStorage.getItem("role") == "admin" || localStorage.getItem("role") == "officer" || localStorage.getItem("role") == "teacher");
+const canApprove = ref(localStorage.getItem("role") == "admin");
+const selectedRoom = ref({})
+
 const booking = ref({
-    date: addBusinessDays(new Date(), 2),
+    date: isReading ? "" : addBusinessDays(new Date(), 2),
     equipments: [],
     recurrent: 0,
     repeatedTimes: 1,
@@ -41,13 +48,6 @@ const minutesGranularity = ref(5);
 const labelPosition = ref("0");
 const dropFile = ref(null);
 const isImageModalActive = ref(false);
-
-// const isReading = ref("<%= action %>" == "read");
-const isReading = ref(id ? true : false);
-// const canBook = ref("<%= (!req.session.canBook) %>" == "false");
-const canReview = ref(localStorage.getItem("role") == "admin" || localStorage.getItem("role") == "officer" || localStorage.getItem("role") == "teacher");
-const canApprove = ref(localStorage.getItem("role") == "admin");
-const selectedRoom = ref({})
 
 const { oruga } = useProgrammatic()
 
@@ -307,8 +307,8 @@ onMounted(() => {
                 </o-field>
 
                 <o-field class="column is-half" :label="t('message.date')">
-                    <o-datepicker placeholder="Click to select..." :min-date="minDate" :max-date="maxDate" locale="en-CA"
-                        v-model="booking.date" v-if="!isReading" editable icon="calendar-today" required>
+                    <o-datepicker placeholder="Click to select..." :min-date="minDate" :max-date="maxDate"
+                        locale="en-CA" v-model="booking.date" v-if="!isReading" editable icon="calendar-today" required>
                     </o-datepicker>
                     <o-input v-model="booking.date" v-if="isReading" readonly></o-input>
                 </o-field>
@@ -395,9 +395,9 @@ onMounted(() => {
                 </o-field>
 
                 <o-field class="column is-half-tablet" :label="t('message.microphoneStand')">
-                    <o-input type="number" controls-position="compact" controls-rounded v-model="booking.microphoneStand"
-                        placeholder="0" :min="0" :max="selectedRoom.MicrophoneStand" v-if="!isReading"
-                        :disabled="!selectedRoom.MicrophoneStand">
+                    <o-input type="number" controls-position="compact" controls-rounded
+                        v-model="booking.microphoneStand" placeholder="0" :min="0" :max="selectedRoom.MicrophoneStand"
+                        v-if="!isReading" :disabled="!selectedRoom.MicrophoneStand">
                     </o-input>
                     <o-input v-model="booking.microphoneStand" v-if="isReading" readonly></o-input>
                 </o-field>

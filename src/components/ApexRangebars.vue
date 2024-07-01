@@ -65,7 +65,6 @@ const series = ref([{
 }]);
 
 const rooms = inject('rooms');
-alert(rooms)
 
 const buildChart = async () => {
 
