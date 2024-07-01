@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, onMounted, inject } from 'vue'
 import { useRoute } from 'vue-router'
-import { addDays, addMonths, addHours, addMinutes } from 'date-fns'
+import { addDays, addMonths, addHours, addMinutes, startOfToday } from 'date-fns'
 // import ApexRangebars from '../components/ApexRangebars.vue'
 import { useI18n } from 'vue-i18n'
 
@@ -18,10 +18,9 @@ const room = ref('');
 const minDate = ref(new Date(new Date().getFullYear() - 80, new Date().getMonth(), new Date().getDate()));
 const maxDate = ref(new Date(new Date().getFullYear() + 18, new Date().getMonth(), new Date().getDate()));
 // const date = ref(route.params.mode == 1 ? new Date(new Date().setHours(0, 0, 0, 0)) : new Date(new Date().getFullYear(), new Date().getMonth(), 1));
-const date = ref(addMinutes(new Date(), new Date().getTimezoneOffset() + 480)); // 8 hours ahead of UTC 
+// const date = ref(addMinutes(new Date(), new Date().getTimezoneOffset() + 480)); // 8 hours ahead of UTC 
+const date = ref(addMinutes(startOfToday(), new Date().getTimezoneOffset() + 480));
 
-
-// const date = new Date(new Date().setHours(0, 0, 0, 0));
 const labelPosition = ref('on-border');
 
 const previousDay = async function () {
@@ -45,7 +44,6 @@ const isLoading = ref(false)
 const hasMobileCards = ref(true)
 
 watch(() => date.value, () => {
-    // alert("here")
     fetchDate();
 });
 
@@ -104,27 +102,27 @@ onMounted(async () => {
             </o-table-column>
 
             <o-table-column field="date" :label="t('message.wirelessMic')" position="centered" v-slot:default="props">
-                {{ props.row.bookings[0]? props.row.bookings[0].wirelessMic : "" }}
+                {{ props.row.bookings[0] ? props.row.bookings[0].wirelessMic : "" }}
             </o-table-column>
 
             <o-table-column field="date2" :label="t('message.microphoneStand')" v-slot:default="props">
-                {{ props.row.bookings[0]? props.row.bookings[0].microphoneStand : "" }}
+                {{ props.row.bookings[0] ? props.row.bookings[0].microphoneStand : "" }}
             </o-table-column>
 
             <o-table-column :label="t('message.longTables')" v-slot:default="props">
-                {{ props.row.bookings[0]? props.row.bookings[0].longTables : "" }}
+                {{ props.row.bookings[0] ? props.row.bookings[0].longTables : "" }}
             </o-table-column>
 
             <o-table-column :label="t('message.chairs')" v-slot:default="props">
-                {{ props.row.bookings[0]? props.row.bookings[0].chairs : "" }}
+                {{ props.row.bookings[0] ? props.row.bookings[0].chairs : "" }}
             </o-table-column>
 
             <o-table-column :label="t('message.ChoirChairs')" v-slot:default="props">
-                {{ props.row.bookings[0]? props.row.bookings[0].choirChairs : "" }}
+                {{ props.row.bookings[0] ? props.row.bookings[0].choirChairs : "" }}
             </o-table-column>
 
             <o-table-column label="Equipment" v-slot:default="props">
-                {{ props.row.bookings[0]? props.row.bookings[0].equipments : "" }}
+                {{ props.row.bookings[0] ? props.row.bookings[0].equipments : "" }}
             </o-table-column>
         </o-table>
     </table>
@@ -207,4 +205,3 @@ onMounted(async () => {
         }
     }
     </i18n>
-    

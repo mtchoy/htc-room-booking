@@ -64,6 +64,9 @@ const series = ref([{
     data: []
 }]);
 
+const rooms = inject('rooms');
+alert(rooms)
+
 const buildChart = async () => {
 
     // var open = props.date.getTime() + 28800000 + 25200000;   // UTC+8 and 7am
@@ -83,7 +86,6 @@ const buildChart = async () => {
         }
     } else {
         var start = startOfDay(props.date)
-        const rooms = inject('rooms');
         hiddenGroup = rooms.map(room => ({ x: room }))
     }
 
