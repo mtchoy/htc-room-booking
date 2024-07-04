@@ -49,7 +49,8 @@ const loadAsyncData = () => {
         throw new Error("Network response was not ok");
       }
 
-      response.json();
+      return response.json();
+      
     })
     .then((result) => {
       // api.themoviedb.org manage max 1000 pages
