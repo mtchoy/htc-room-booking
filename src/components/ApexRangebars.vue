@@ -158,7 +158,8 @@ const fetchSlots = async (startISOString, hiddenGroup) => {
 
     } else {
         var message = await response.json();
-        alert(JSON.stringify(message));
+        // alert(JSON.stringify(message));
+        location.assign('/logout');
     }
 }
 
