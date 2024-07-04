@@ -159,7 +159,9 @@ const fetchSlots = async (startISOString, hiddenGroup) => {
     } else {
         var message = await response.json();
         // alert(JSON.stringify(message));
-        location.assign('/logout');
+        if (localStorage.getItem('msalToken') == null) {
+            location.assign('/logout');
+        }
     }
 }
 

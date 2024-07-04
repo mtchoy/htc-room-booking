@@ -69,7 +69,7 @@ const loadAsyncData = () => {
       //     data.value.push({})
       // }
 
-      console.log(JSON.stringify(result))
+      // console.log(JSON.stringify(result))
 
       loading.value = false
     })
@@ -77,8 +77,12 @@ const loadAsyncData = () => {
       data.value = []
       total.value = 0
       loading.value = false
-      // throw error
-      location.assign('/logout')
+      if (localStorage.getItem('msalToken') == null) {
+        // alert('Please login first')
+        location.assign('/logout')
+      }
+      throw error
+      
     })
 }
 
