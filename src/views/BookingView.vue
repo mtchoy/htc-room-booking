@@ -257,8 +257,10 @@ const printLoading = ref(true);
 const printObj = {
     id: "printMe",
     popTitle: 'good print',
+    preview: true,
     // extraCss: "https://cdn.bootcdn.net/ajax/libs/animate.css/4.1.1/animate.compat.css, https://cdn.bootcdn.net/ajax/libs/hover.css/2.3.1/css/hover-min.css",
     // extraHead: '<meta http-equiv="Content-Language"content="zh-cn"/>',
+    extraHead: '<style> * { color-adjust: exact; -webkit-print-color-adjust: exact; } </style>',
     beforeOpenCallback(vue) {
         vue.printLoading = true;
         // console.log('打开之前')
@@ -528,20 +530,19 @@ onMounted(() => {
             </o-field>
 
             <div class="field" v-if="locale == 'en'">
-                <div class="control">
-                    <button class="button is-link" type="submit" v-if="!isReading">Submit</button>
+                <div class="control buttons">
+                    <o-button class="button is-link" type="submit" v-if="!isReading">Submit</o-button>
                     <button class="button is-link is-warning" type="button" @click="withdraw"
                         v-if="isReading && booking.username == '<%= req.session.username %>'">Withdraw</button>
-                    <button class="button is-link is-success" type="button" @click="changeStatus('Approved')"
-                        v-if="isReading && canApprove && booking.status != 'Approved'">Approve</button>
-                    <button class="button is-link is-danger" type="button" @click="changeStatus('Rejected')"
-                        v-if="isReading && canApprove && booking.status != 'Rejected'">Reject</button>
+                    <o-button class="button is-link is-success" type="button" @click="changeStatus('Approved')"
+                        v-if="isReading && canApprove && booking.status != 'Approved'">Approve</o-button>
+                    <o-button class="button is-link is-danger" type="button" @click="changeStatus('Rejected')"
+                        v-if="isReading && canApprove && booking.status != 'Rejected'">Reject</o-button>
                     <!-- <button class="button is-dark" type="button" @click="" v-if="isReading && canReview">Print</button> -->
-                    <button class="button is-dark" @click="locale = 'zh'" v-if="isReading && canReview"
-                        v-print="printObj">Print</button>
+                    <o-button class="button is-dark" @click="locale = 'zh'" v-if="isReading && canReview"
+                        v-print="printObj">Print</o-button>
                 </div>
             </div>
-
         </div>
 
         <!-- <div id="loading" v-show="printLoading"></div> -->
