@@ -57,11 +57,11 @@ async function sendEmail(booking) {
 }
 
 function buildValueContent(key, value, booking) {
-    if (key === "startTime" || key === "endTime" || key === "updatedAt" || key === "fd") {
+    if (key === "startTime" || key === "endTime" || key === "updatedAt" || key === "fd" || key === "filename") {
         return "";
     }
     if (key === "date") {
-        return `${new Date(value).toLocaleDateString("en-CA")}, ${new Date(booking.startTime).toLocaleTimeString("en-CA")} - ${new Date(booking.endTime).toLocaleTimeString("en-CA")}`;
+        return `${new Date(value).toLocaleDateString("en-CA")}, ${booking.startTime} - ${booking.endTime}`;
     }
     if (key === "createdAt") {
         return `${new Date(value).toLocaleString("en-CA")}`;
@@ -72,7 +72,7 @@ function buildValueContent(key, value, booking) {
 function buildEmailContent(context) {
 
     const tableContent = Object.entries(context).map(([key, value]) => {
-        if (key === "startTime" || key === "endTime" || key === "updatedAt" || key === "fd") {
+        if (key === "startTime" || key === "endTime" || key === "updatedAt" || key === "fd" || key === "filename") {
             return "";
         }
         return `<tr>
