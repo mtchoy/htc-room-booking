@@ -70,7 +70,7 @@ const bearerStrategy = new passportAzureAd.BearerStrategy({
         rights.canApprove = true;
         rights.canSeeList = true;
         rights.canSeeOne = true;
-    } else if (token.groups.includes("f1c9b0a0-1f1a-4f1e-8f1e-8f1e8f1e8f1e")) {
+    } else if (token.groups.includes("f1c9b0a0-1f1a-4f1e-8f1e-8f1e8f1e8f1e") || token.groups.includes("ab785f76-33a5-4562-83f0-438a0287b95b")) {
         rights.canSeeList = true;
         rights.canSeeOne = true;
     } else if (token.groups.includes("f1c9b0a0-1f1a-4f1e-8f1e-8f1e8f1e8f1e")) {
