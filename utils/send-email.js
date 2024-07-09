@@ -12,7 +12,7 @@ async function sendEmail(booking) {
         const message = {
             senderAddress: "<donotreply@1bfbe8a3-ed15-4f02-b234-22c449805775.azurecomm.net>",
             content: {
-                subject: `Your booking request ( id: ${booking.id} )`,
+                subject: `Your booking request ( id: ${booking._id} )`,
                 // plainText: "This email message is sent from Azure Communication Services Email using the JavaScript SDK.",
                 html: buildEmailContent(booking)
             },
