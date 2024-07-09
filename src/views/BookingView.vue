@@ -531,16 +531,16 @@ onMounted(() => {
 
             <div class="field" v-if="locale == 'en'">
                 <div class="control buttons">
-                    <o-button class="button is-link" type="submit" v-if="!isReading">Submit</o-button>
+                    <button class="button is-link" type="submit" v-if="!isReading">Submit</button>
                     <button class="button is-link is-warning" type="button" @click="withdraw"
                         v-if="isReading && booking.username == '<%= req.session.username %>'">Withdraw</button>
-                    <o-button class="button is-link is-success" type="button" @click="changeStatus('Approved')"
-                        v-if="isReading && canApprove && booking.status != 'Approved'">Approve</o-button>
-                    <o-button class="button is-link is-danger" type="button" @click="changeStatus('Rejected')"
-                        v-if="isReading && canApprove && booking.status != 'Rejected'">Reject</o-button>
+                    <button class="button is-link is-success" type="button" @click="changeStatus('Approved')"
+                        v-if="isReading && canApprove && booking.status != 'Approved'">Approve</button>
+                    <button class="button is-link is-danger" type="button" @click="changeStatus('Rejected')"
+                        v-if="isReading && canApprove && booking.status != 'Rejected'">Reject</button>
                     <!-- <button class="button is-dark" type="button" @click="" v-if="isReading && canReview">Print</button> -->
-                    <o-button class="button is-dark" @click="locale = 'zh'" v-if="isReading && canReview"
-                        v-print="printObj">Print</o-button>
+                    <button class="button is-dark" @click="locale = 'zh'" v-if="isReading && canReview"
+                        v-print="printObj">Print</button>
                 </div>
             </div>
         </div>
