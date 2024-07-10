@@ -2,13 +2,14 @@
 import { ref } from 'vue'
 import OrugaTable from '../components/OrugaTable.vue'
 
-const isSwitchedCustom = ref("My Bookings")
+const canReview = ref(localStorage.getItem("role") == "admin" || localStorage.getItem("role") == "officer");
+const isSwitchedCustom = canReview.value ? ref("Review Bookings") : ref("My Bookings")
 </script>
 
 <template>
     <o-field>
         <o-switch v-model="isSwitchedCustom" variant="dark" passive-variant="info" true-value="My Bookings"
-            false-value="Review Bookings">
+            false-value="Review Bookings" v-if="canReview">
             {{ isSwitchedCustom }}
         </o-switch>
     </o-field>
