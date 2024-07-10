@@ -26,8 +26,6 @@ const { t, locale } = useI18n({
     useScope: 'local'
 })
 
-
-
 const route = useRoute()
 const id = route.params.id;
 
@@ -248,16 +246,19 @@ const withdraw = async function () {
 
         if (response.ok) {
 
-            oruga.notification.open({
-                message: 'Application withdrawn successfully.',
-                type: 'is-success',
-                position: 'is-top',
-                actionText: 'OK',
-                indefinite: true,
-                onAction: () => {
-                    location.assign("/booking/listMine")
-                }
-            })
+            alert("Application withdrawn successfully.")
+            location.assign("/bookings")
+
+            // oruga.notification.open({
+            //     message: 'Application withdrawn successfully.',
+            //     type: 'is-success',
+            //     position: 'is-top',
+            //     actionText: 'OK',
+            //     indefinite: true,
+            //     onAction: () => {
+            //         location.assign("/bookings")
+            //     }
+            // })
 
         } else {
             alert(response.statusText);
