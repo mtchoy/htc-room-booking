@@ -51,7 +51,7 @@ const burgerClicked = () => {
 </script>
 
 <template>
-    <nav class="navbar" role="navigation" aria-label="main navigation" v-if="name">
+    <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation" v-if="name">
         <div class="navbar-brand">
             <a class="navbar-item" href="/">
                 <!-- <img src="../assets/Holy-Trinity-College-logo-vector-01.svg" width="112" height="28"> -->

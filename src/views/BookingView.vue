@@ -6,11 +6,27 @@ import { addBusinessDays, addYears, setHours, formatISO9075 } from 'date-fns'
 import { useI18n } from 'vue-i18n'
 import { useProgrammatic } from '@oruga-ui/oruga-next'
 import vPrint from 'vue3-print-nb'
+import { computed } from 'vue';
+import { useMsal } from '../composition-api/useMsal';
+
+const { accounts } = useMsal();
+
+const name = computed(() => {
+    if (accounts.value.length > 0) {
+        const name = accounts.value[0].name;
+        if (name) {
+            return name.split(" ")[0];
+        }
+    }
+    return "";
+});
 
 const { t, locale } = useI18n({
     inheritLocale: true,
     useScope: 'local'
 })
+
+
 
 const route = useRoute()
 const id = route.params.id;
@@ -257,7 +273,7 @@ const printLoading = ref(true);
 const printObj = {
     id: "printMe",
     popTitle: 'good print',
-    preview: true,
+    // preview: true,
     // extraCss: "https://cdn.bootcdn.net/ajax/libs/animate.css/4.1.1/animate.compat.css, https://cdn.bootcdn.net/ajax/libs/hover.css/2.3.1/css/hover-min.css",
     // extraHead: '<meta http-equiv="Content-Language"content="zh-cn"/>',
     extraHead: '<style> * { color-adjust: exact; -webkit-print-color-adjust: exact; } </style>',
@@ -533,7 +549,7 @@ onMounted(() => {
                 <div class="control buttons">
                     <button class="button is-link" type="submit" v-if="!isReading">Submit</button>
                     <button class="button is-link is-warning" type="button" @click="withdraw"
-                        v-if="isReading && booking.username == '<%= req.session.username %>'">Withdraw</button>
+                        v-if="isReading && booking.username == name">Withdraw</button>
                     <button class="button is-link is-success" type="button" @click="changeStatus('Approved')"
                         v-if="isReading && canApprove && booking.status != 'Approved'">Approve</button>
                     <button class="button is-link is-danger" type="button" @click="changeStatus('Rejected')"
