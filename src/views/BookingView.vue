@@ -232,41 +232,41 @@ const fileChanged = async function () {
     }
 }
 
-const withdraw = function () {
+const withdraw = async function () {
 
-    oruga.dialog.confirm({
-        message: 'Are you sure to withdraw this booking?',
-        onConfirm: async () => {
+    var result = confirm("Are you sure to withdraw this booking?")
 
-            var response = await fetch("/api/bookings/" + id, {
-                method: 'delete',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('msalToken')}`,
-                    'X-Custom-Authorization': `Bearer ${localStorage.getItem('msalToken')}`
-                }
-            });
+    if (result) {
 
-            if (response.ok) {
-
-                oruga.notification.open({
-                    message: 'Application withdrawn successfully.',
-                    type: 'is-success',
-                    position: 'is-top',
-                    actionText: 'OK',
-                    indefinite: true,
-                    onAction: () => {
-                        location.assign("/booking/listMine")
-                    }
-                })
-
-            } else {
-                alert(response.statusText);
-                // var message = await response.json();
-                // alert(JSON.stringify(message));
+        var response = await fetch("/api/bookings/" + id, {
+            method: 'delete',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('msalToken')}`,
+                'X-Custom-Authorization': `Bearer ${localStorage.getItem('msalToken')}`
             }
+        });
+
+        if (response.ok) {
+
+            oruga.notification.open({
+                message: 'Application withdrawn successfully.',
+                type: 'is-success',
+                position: 'is-top',
+                actionText: 'OK',
+                indefinite: true,
+                onAction: () => {
+                    location.assign("/booking/listMine")
+                }
+            })
+
+        } else {
+            alert(response.statusText);
+            // var message = await response.json();
+            // alert(JSON.stringify(message));
         }
-    })
+    }
 }
+
 
 const printLoading = ref(true);
 
