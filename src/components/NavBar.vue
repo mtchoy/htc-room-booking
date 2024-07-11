@@ -24,7 +24,7 @@ const name = computed(() => {
             return name.split(" ")[0];
         }
     }
-    return "default";
+    return "";
 });
 
 const options = [{
@@ -75,7 +75,7 @@ const burgerClicked = () => {
 
             <div class="navbar-end">
                 <div class="navbar-item">
-                    <div class="buttons">
+                    <div class="buttons" >
                         <a class="button is-outline-primary" href="/">
                             <strong>{{ name }}</strong>
                         </a>
