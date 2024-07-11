@@ -123,7 +123,7 @@ const submitForm = async function () {
             actionText: 'OK',
             // indefinite: true,
             onAction: () => {
-                location.assign("/booking/listMine")
+                location.assign("/bookings")
             }
         })
 
