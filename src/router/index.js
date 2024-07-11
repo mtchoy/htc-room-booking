@@ -15,11 +15,11 @@ const router = createRouter({
       name: 'booking-list',
       component: () => import('../views/BookingList.vue'),
     },
-    {
-      path: '/booking',
-      name: 'new-booking',
-      component: () => import('../views/BookingView.vue'),
-    },
+    // {
+    //   path: '/booking',
+    //   name: 'new-booking',
+    //   component: () => import('../views/BookingView.vue'),
+    // },
     {
       path: '/booking/:id',
       name: 'booking-view',
