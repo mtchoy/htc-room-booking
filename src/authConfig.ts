@@ -15,30 +15,30 @@ export const msalConfig = {
     storeAuthStateInCookie: false
   },
   system: {
-      loggerOptions: {
-          loggerCallback: (level: LogLevel, message: string, containsPii: boolean) => {
-              if (containsPii) {
-                  return;
-              }
-              switch (level) {
-                  case LogLevel.Error:
-                      console.error(message);
-                      return;
-                  case LogLevel.Info:
-                      console.info(message);
-                      return;
-                  case LogLevel.Verbose:
-                      console.debug(message);
-                      return;
-                  case LogLevel.Warning:
-                      console.warn(message);
-                      return;
-                  default:
-                      return;
-              }
-          },
-          logLevel: LogLevel.Verbose
-      }
+    loggerOptions: {
+      loggerCallback: (level: LogLevel, message: string, containsPii: boolean) => {
+        if (containsPii) {
+          return;
+        }
+        switch (level) {
+          case LogLevel.Error:
+            console.error(message);
+            return;
+          case LogLevel.Info:
+            console.info(message);
+            return;
+          case LogLevel.Verbose:
+            console.debug(message);
+            return;
+          case LogLevel.Warning:
+            console.warn(message);
+            return;
+          default:
+            return;
+        }
+      },
+      logLevel: LogLevel.Verbose
+    }
   }
 };
 
@@ -48,6 +48,8 @@ export const msalInstance = new PublicClientApplication(msalConfig);
 export const loginRequest = {
   // scopes: ['User.Read', 'Bookings.Read'],
   scopes: ['api://51578f82-653c-4e5b-bca0-d805e361f14b/Bookings.Read'],
+  forceRefresh: true,
+  refreshTokenExpirationOffsetSeconds: 17200 * 12 // 2 hours * 60 minutes * 60 seconds = 7200 seconds
 };
 
 // Add here the endpoints for MS Graph API services you would like to use.
