@@ -5,7 +5,7 @@ function verifyToken(req, res, next) {
   var token = req.header('Authorization');
 
   req.user = {}
-  return next();
+  // return next();
 
   if (!token) {
     return res.status(401).json({ error: 'Authentication failed: no token provided' });

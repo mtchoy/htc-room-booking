@@ -65,7 +65,7 @@ router.post('/', async (req, res) => {
         slotEnd = addDays(slotEnd, daysToAdd);
     }
 
-    console.log(queries)
+    // console.log(queries)
 
     const db = await connectToDB();
     try {
