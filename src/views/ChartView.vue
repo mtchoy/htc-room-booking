@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, inject } from 'vue'
 import { useRoute } from 'vue-router'
-import { addDays, addMonths, addHours, addMinutes } from 'date-fns'
+import { addDays, addMonths, format, startOfMonth, startOfDay } from 'date-fns'
 import ApexRangebars from '../components/ApexRangebars.vue'
 
 // const count = ref(0)
@@ -11,30 +11,23 @@ const rooms = ref(inject('rooms'));
 const room = ref(route.params.mode == 1 ? '' : 'Hall');
 const minDate = ref(new Date(new Date().getFullYear() - 80, new Date().getMonth(), new Date().getDate()));
 const maxDate = ref(new Date(new Date().getFullYear() + 18, new Date().getMonth(), new Date().getDate()));
-// const date = ref(route.params.mode == 1 ? new Date(new Date().setHours(0, 0, 0, 0)) : new Date(new Date().getFullYear(), new Date().getMonth(), 1));
-const date = ref(addMinutes(new Date(), new Date().getTimezoneOffset() + 480)); // 8 hours ahead of UTC 
+const date = ref(route.params.mode == 1 ? startOfDay(new Date()) : startOfMonth(new Date()));
 
-
-// const date = new Date(new Date().setHours(0, 0, 0, 0));
 const labelPosition = ref('on-border');
 
 const previousDay = async function () {
-    // date.value = new Date(date.value.getTime() - 86400000);
     date.value = addDays(date.value, -1);
 }
 
 const nextDay = async function () {
-    // date.value = new Date(date.value.getTime() + 86400000);
     date.value = addDays(date.value, 1);
 }
 
 const previousMonth = async function () {
-    // date.value = new Date(date.value.getFullYear(), date.value.getMonth() - 1, 1);
     date.value = addMonths(date.value, -1)
 }
 
 const nextMonth = async function () {
-    // date.value = new Date(date.value.getFullYear(), date.value.getMonth() + 1, 1);
     date.value = addMonths(date.value, 1)
 }
 
@@ -42,8 +35,10 @@ watch(() => route.params.mode, () => {
 
     if (route.params.mode == 1) {
         room.value = '';
+        date.value = startOfDay(new Date());
     } else {
         room.value = 'Hall';
+        date.value = startOfMonth(new Date());
     }
 
 });
@@ -95,7 +90,7 @@ watch(() => route.params.mode, () => {
         </o-button>
 
     </div>
-    <ApexRangebars :date="date" :room="room" />
+    <ApexRangebars :date="format(date, 'yyyy-MM-dd')" :room="room" />
 </template>
 
 <style scoped>
