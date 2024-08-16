@@ -28,10 +28,10 @@ const name = computed(() => {
 });
 
 const options = [
-//     {
-//     text: "Create Booking",
-//     path: "/booking"
-// },
+    {
+    text: "Create Booking",
+    path: "/booking"
+},
 {
     text: "Bookings",
     path: "/bookings"
