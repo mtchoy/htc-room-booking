@@ -2,7 +2,7 @@
 // import HelloWorld from '../components/HelloWorld.vue'
 import { ref, watch, onMounted, inject } from 'vue';
 import { useRoute } from 'vue-router';
-import { addBusinessDays, addYears, setHours, formatISO9075 } from 'date-fns'
+import { addBusinessDays, addYears, formatISO9075, setMilliseconds, setSeconds, setMinutes, setHours } from 'date-fns'
 import { useI18n } from 'vue-i18n'
 import { useProgrammatic } from '@oruga-ui/oruga-next'
 import vPrint from 'vue3-print-nb'
@@ -54,8 +54,36 @@ const rooms = ref(inject('rooms'));
 // const minDate = ref(addBusinessDays(new Date(), 2));
 const minDate = ref(new Date('2024-08-31T16:00:00.000Z'));
 const maxDate = ref(addYears(new Date(), 2));
-const minTime = ref(setHours(new Date(), 7));
-const maxTime = ref(setHours(new Date(), 18));
+const minTime = ref(
+  setMilliseconds(
+    setSeconds(
+      setMinutes(
+        setHours(
+          new Date(),
+          7 // Hours (7 AM)
+        ),
+        0 // Minutes
+      ),
+      0 // Seconds
+    ),
+    0 // Milliseconds
+  )
+);
+const maxTime = ref(
+  setMilliseconds(
+    setSeconds(
+      setMinutes(
+        setHours(
+          new Date(),
+          18 // Hours (18)
+        ),
+        0 // Minutes
+      ),
+      0 // Seconds
+    ),
+    0 // Milliseconds
+  )
+);
 const hourFormat = ref("24"); // Browser locale
 const enableSeconds = ref(false);
 // const locale = ref(undefined); // Browser locale
