@@ -1,7 +1,7 @@
 {
   "name": "my-vue-app",
   "private": true,
-  "version": "2.0.9",
+  "version": "2.0.10",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@azure/msal-browser": "^3.0.2",
+    "@azure/msal-browser": "^3.2.1",
     "@mdi/font": "^7.2.96",
     "@oruga-ui/oruga-next": "^0.5.10",
     "@oruga-ui/theme-bulma": "^0.2.9",
