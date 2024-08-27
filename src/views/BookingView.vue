@@ -11,15 +11,21 @@ import { useMsal } from '../composition-api/useMsal';
 
 const { accounts } = useMsal();
 
-const name = computed(() => {
-    if (accounts.value.length > 0) {
-        const name = accounts.value[0].name;
-        if (name) {
-            return name.split(" ")[0];
-        }
-    }
-    return "";
-});
+const name = ref("")
+
+if (accounts.value && accounts.value.length > 0 && accounts.value[0].name)
+    name.value = accounts.value[0].name
+
+// // const name = computed(() => {
+//     if (accounts.value.length > 0) {
+//         alert(accounts.value.length)
+//         const name = accounts.value[0].name;
+//         // if (name) {
+//         //     return name.split(" ")[0];
+//         // }
+//     }
+//     // return "";
+// // });
 
 const { t, locale } = useI18n({
     inheritLocale: true,
@@ -55,34 +61,34 @@ const rooms = ref(inject('rooms'));
 const minDate = ref(new Date('2024-08-31T16:00:00.000Z'));
 const maxDate = ref(addYears(new Date(), 2));
 const minTime = ref(
-  setMilliseconds(
-    setSeconds(
-      setMinutes(
-        setHours(
-          new Date(),
-          7 // Hours (7 AM)
+    setMilliseconds(
+        setSeconds(
+            setMinutes(
+                setHours(
+                    new Date(),
+                    7 // Hours (7 AM)
+                ),
+                0 // Minutes
+            ),
+            0 // Seconds
         ),
-        0 // Minutes
-      ),
-      0 // Seconds
-    ),
-    0 // Milliseconds
-  )
+        0 // Milliseconds
+    )
 );
 const maxTime = ref(
-  setMilliseconds(
-    setSeconds(
-      setMinutes(
-        setHours(
-          new Date(),
-          18 // Hours (18)
+    setMilliseconds(
+        setSeconds(
+            setMinutes(
+                setHours(
+                    new Date(),
+                    18 // Hours (18)
+                ),
+                0 // Minutes
+            ),
+            0 // Seconds
         ),
-        0 // Minutes
-      ),
-      0 // Seconds
-    ),
-    0 // Milliseconds
-  )
+        0 // Milliseconds
+    )
 );
 const hourFormat = ref("24"); // Browser locale
 const enableSeconds = ref(false);
