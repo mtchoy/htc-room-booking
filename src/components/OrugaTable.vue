@@ -50,7 +50,7 @@ const loadAsyncData = () => {
       }
 
       return response.json();
-      
+
     })
     .then((result) => {
       // api.themoviedb.org manage max 1000 pages
@@ -78,12 +78,12 @@ const loadAsyncData = () => {
       data.value = []
       total.value = 0
       loading.value = false
-      if (localStorage.getItem('msalToken') == null) {
-        // alert('Please login first')
-        location.assign('/logout')
-      }
-      throw error
-      
+      // if (localStorage.getItem('msalToken') == null) {
+      // alert('Please login first')
+      location.assign('/logout')
+      // }
+      // throw error
+
     })
 }
 
@@ -133,7 +133,7 @@ watch(() => props.isReviewer, () => {
   <o-table :data="data" :loading="loading" paginated backend-pagination :total="total" :per-page="perPage"
     @page-change="onPageChange" aria-next-label="Next page" aria-previous-label="Previous page" aria-page-label="Page"
     aria-current-label="Current page" backend-sorting :default-sort-direction="defaultSortOrder"
-    :default-sort="[sortField, sortOrder]" @sort="onSort" height="480px">
+    :default-sort="[sortField, sortOrder]" @sort="onSort">
 
     <o-table-column field="id" label="ID" width="40" numeric v-slot="props">
       {{ props.row._id.slice(-7) }}
@@ -151,7 +151,7 @@ watch(() => props.isReviewer, () => {
     </o-table-column>
 
     <o-table-column field="user" label="User/Org" v-slot="props">
-      {{ props.row.user }}
+      {{ props.row.user.substr(0, 35 - 1) + (props.row.user.length > 35 ? '&hellip;' : '') }}
     </o-table-column>
 
     <o-table-column field="room" label="Room" v-slot="props">
@@ -179,31 +179,32 @@ watch(() => props.isReviewer, () => {
     </o-table-column>
 
     <!-- <o-table-column field="original_title" label="Title" sortable #default="props">
-                            {{ props.row.original_title }}
-                        </o-table-column>
-                        <o-table-column field="vote_average" label="Vote Average" numeric sortable #default="props">
-                            <span class="tag" :class="type(props.row.vote_average)">
-                                {{ props.row.vote_average }}
-                            </span>
-                        </o-table-column>
-                        <o-table-column field="vote_count" label="Vote Count" numeric sortable #default="props">
-                            {{ props.row.vote_count }}
-                        </o-table-column>
-                        <o-table-column field="release_date" label="Release Date" sortable centered #default="props">
-                            {{
-                                props.row.release_date
-                                ? new Date(props.row.release_date).toLocaleDateString()
-                                : 'unknown'
-                            }}
-                        </o-table-column>
-                        <o-table-column label="Overview" width="500" #default="props">
-                            {{ props.row.overview }}
-                        </o-table-column> -->
+      {{ props.row.original_title }}
+    </o-table-column>
+    <o-table-column field="vote_average" label="Vote Average" numeric sortable #default="props">
+      <span class="tag" :class="type(props.row.vote_average)">
+        {{ props.row.vote_average }}
+      </span>
+    </o-table-column>
+    <o-table-column field="vote_count" label="Vote Count" numeric sortable #default="props">
+      {{ props.row.vote_count }}
+    </o-table-column>
+    <o-table-column field="release_date" label="Release Date" sortable centered #default="props">
+      {{
+        props.row.release_date
+          ? new Date(props.row.release_date).toLocaleDateString()
+          : 'unknown'
+      }}
+    </o-table-column>
+    <o-table-column label="Overview" width="500" #default="props">
+      {{ props.row.overview }}
+    </o-table-column> -->
+
   </o-table>
   <!-- </section> -->
-  <!-- <div v-if="bookings.length == 0">
-                                                        No Bookings
-                                                    </div> -->
+  <div v-if="data.length == 0" style="height:50vh">
+    No Bookings
+  </div>
 
   <!-- </div> -->
 </template>
