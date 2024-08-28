@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const { addDays, parseISO } = require('date-fns')
+const { addDays, parseISO, addHours } = require('date-fns')
 const { connectToDB, ObjectId } = require('../utils/db');
 
 // Get all timeslot item
@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
         return;
     }
 
-    var startDate = new Date(date);
+    var startDate = addHours(new Date(date), -8);
     const query = { startTime: { $gt: startDate } };
 
     if (room) {
