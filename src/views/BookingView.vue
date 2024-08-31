@@ -43,8 +43,9 @@ const canApprove = ref(localStorage.getItem("role") == "admin");
 const selectedRoom = ref({})
 
 const booking = ref({
-    date: isReading.value ? "" : new Date('2024-08-31T16:00:00.000Z'),
+    // date: isReading.value ? "" : new Date('2024-08-31T16:00:00.000Z'),
     // addBusinessDays(new Date(), 2),
+    date: isReading.value ? "" : addBusinessDays(new Date(), 2),
     equipments: [],
     recurrent: 0,
     repeatedTimes: 1,
