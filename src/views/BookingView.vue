@@ -1,7 +1,7 @@
 <script setup>
 // import HelloWorld from '../components/HelloWorld.vue'
 import { ref, watch, onMounted, inject } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { addBusinessDays, addYears, formatISO9075, setMilliseconds, setSeconds, setMinutes, setHours } from 'date-fns'
 import { useI18n } from 'vue-i18n'
 import { useProgrammatic } from '@oruga-ui/oruga-next'
@@ -10,6 +10,8 @@ import { computed } from 'vue';
 import { useMsal } from '../composition-api/useMsal';
 
 const { accounts } = useMsal();
+
+const router = useRouter()
 
 const name = ref("")
 
@@ -305,6 +307,11 @@ const withdraw = async function () {
     }
 }
 
+const back = function () {
+
+    router.go(-1)
+}
+
 
 const printLoading = ref(true);
 
@@ -595,6 +602,7 @@ onMounted(() => {
                     <!-- <button class="button is-dark" type="button" @click="" v-if="isReading && canReview">Print</button> -->
                     <button class="button is-dark" @click="locale = 'zh'" v-if="isReading && canReview"
                         v-print="printObj">Print</button>
+                    <button class="button is-info" @click="back" v-if="isReading && canReview">Back</button>
                 </div>
             </div>
         </div>
