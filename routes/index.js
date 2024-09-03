@@ -9,7 +9,7 @@ router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.post('/upload', async function (req, res) {
+router.post('/api/upload', async function (req, res) {
   console.log(req.files.foo); // the uploaded file object
   const url = await uploadToAzure(req.files.foo);
 
@@ -21,14 +21,14 @@ router.post('/upload', async function (req, res) {
 });
 
 // Get Blob SAS URL
-router.get('/blob/:foo', async function (req, res) {
+router.get('/api/blob/:foo', async function (req, res) {
 
   var response = await getBlobSasUri(req.params.foo);
 
   res.send(response);
 });
 
-router.get('/rooms/:id', function (req, res) {
+router.get('/api/rooms/:id', function (req, res) {
 
   const room = rooms.find(room => room.id === req.params.id);
 

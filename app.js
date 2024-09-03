@@ -103,7 +103,7 @@ app.use(passport.initialize());
 
 passport.use(bearerStrategy);
 
-app.use('/bookings', (req, res, next) => {
+app.use('/api/bookings', (req, res, next) => {
     passport.authenticate('oauth-bearer', {
         session: false,
 
@@ -153,7 +153,7 @@ app.use('/bookings', (req, res, next) => {
     }
 );
 
-app.use('/timeslots', (req, res, next) => {
+app.use('/api/timeslots', (req, res, next) => {
     passport.authenticate('oauth-bearer', {
         session: false,
 
