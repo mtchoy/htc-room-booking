@@ -243,7 +243,7 @@ router.delete('/:id', async (req, res) => {
         }
 
         const result = await db.collection('booking').deleteOne({ _id: new ObjectId(id) });
-        await db.collection('timeslot').deleteOne({ booking: new ObjectId(id) });
+        await db.collection('timeslot').deleteMany({ booking: new ObjectId(id) });
         res.status(200).json({ message: 'Booking deleted successfully' });
     } catch (err) {
         res.status(400).json({ message: err.message });
