@@ -79,6 +79,8 @@ const buildChart = async () => {
         }
     } else {
         hiddenGroup = rooms.map(room => ({ x: room }))
+        // console.log(hiddenGroup);
+        hiddenGroup[12].x = "Rm214 (Band Rm)"   
     }
 
     await fetchSlots(props.date, hiddenGroup);
