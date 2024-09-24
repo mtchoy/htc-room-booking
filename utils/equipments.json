@@ -252,27 +252,6 @@
       "RubbishBin": true
     },
     {
-      "id": "Rm514",
-      "name": "Rm514 (Teacher only)",
-      "zhname": "Rm514",
-      "WirelessMic": 0,
-      "MicrophoneStand": 0,
-      "LongTables": 0,
-      "Chairs": 0,
-      "ChoirChairs": 0,
-      "NotebookComputer": true,
-      "LCDProjectorScreen": true,
-      "WiFi": true,
-      "Visualizer": false,
-      "Podium": false,
-      "PianoMic": false,
-      "Sound System": true,
-      "CameraPhotoTaking": true,
-      "CdPlayer": false,
-      "Bell": false,
-      "RubbishBin": false
-    },
-    {
       "id": "Rm214",
       "name": "Band room (Rm214)",
       "zhname": "Rm214",

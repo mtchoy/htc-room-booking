@@ -77,12 +77,6 @@ const bearerStrategy = new passportAzureAd.BearerStrategy({
         rights.canSeeOne = true;
     }
 
-    // check if the user is a developer or SK
-    if (rights.username == "developer" || rights.username == "sk") {
-        console.log("rights", rights);
-        console.log("token", token);
-    }
-
     return done(null, { ...token, ...rights }, token);
 });
 
@@ -209,3 +203,25 @@ app.use('/api/timeslots', (req, res, next) => {
 );
 
 module.exports = app;
+
+    // {
+    //   "id": "Rm514",
+    //   "name": "Rm514 (Teacher only)",
+    //   "zhname": "Rm514",
+    //   "WirelessMic": 0,
+    //   "MicrophoneStand": 0,
+    //   "LongTables": 0,
+    //   "Chairs": 0,
+    //   "ChoirChairs": 0,
+    //   "NotebookComputer": true,
+    //   "LCDProjectorScreen": true,
+    //   "WiFi": true,
+    //   "Visualizer": false,
+    //   "Podium": false,
+    //   "PianoMic": false,
+    //   "Sound System": true,
+    //   "CameraPhotoTaking": true,
+    //   "CdPlayer": false,
+    //   "Bell": false,
+    //   "RubbishBin": false
+    // },
