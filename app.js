@@ -77,6 +77,12 @@ const bearerStrategy = new passportAzureAd.BearerStrategy({
         rights.canSeeOne = true;
     }
 
+    // check if the user is a developer or SK
+    if (rights.username == "developer" || rights.username == "sk") {
+        console.log("rights", rights);
+        console.log("token", token);
+    }
+
     return done(null, { ...token, ...rights }, token);
 });
 
