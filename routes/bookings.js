@@ -168,6 +168,8 @@ router.get('/:id', async (req, res) => {
             return res.status(401).json({ message: 'Unauthorized' });
         }
 
+        result.isOwner = result.username === req.user.username; 
+
         if (result.filename) {
             result.imageUri = await getBlobSasUri(result.filename);
         }
