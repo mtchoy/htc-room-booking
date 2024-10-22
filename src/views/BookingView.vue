@@ -6,28 +6,8 @@ import { addBusinessDays, addYears, formatISO9075, setMilliseconds, setSeconds, 
 import { useI18n } from 'vue-i18n'
 import { useProgrammatic } from '@oruga-ui/oruga-next'
 import vPrint from 'vue3-print-nb'
-import { computed } from 'vue';
-import { useMsal } from '../composition-api/useMsal';
-
-const { accounts } = useMsal();
 
 const router = useRouter()
-
-const name = ref("")
-
-if (accounts.value && accounts.value.length > 0 && accounts.value[0].name)
-    name.value = accounts.value[0].name
-
-// // const name = computed(() => {
-//     if (accounts.value.length > 0) {
-//         alert(accounts.value.length)
-//         const name = accounts.value[0].name;
-//         // if (name) {
-//         //     return name.split(" ")[0];
-//         // }
-//     }
-//     // return "";
-// // });
 
 const { t, locale } = useI18n({
     inheritLocale: true,
@@ -37,16 +17,12 @@ const { t, locale } = useI18n({
 const route = useRoute()
 const id = route.params.id;
 
-// const isReading = ref("<%= action %>" == "read");
 const isReading = ref(id ? true : false);
-// const canBook = ref("<%= (!req.session.canBook) %>" == "false");
 const canReview = ref(localStorage.getItem("role") == "admin" || localStorage.getItem("role") == "officer" || localStorage.getItem("role") == "teacher");
 const canApprove = ref(localStorage.getItem("role") == "admin");
 const selectedRoom = ref({})
 
 const booking = ref({
-    // date: isReading.value ? "" : new Date('2024-08-31T16:00:00.000Z'),
-    // addBusinessDays(new Date(), 2),
     date: isReading.value ? "" : addBusinessDays(new Date(), 2),
     equipments: [],
     recurrent: 0,
@@ -59,8 +35,6 @@ const booking = ref({
 });
 
 const rooms = ref(inject('rooms'));
-// const date = ref(new Date(new Date().setHours(0, 0, 0, 0)));
-// const minDate = ref(addBusinessDays(new Date(), 2));
 const minDate = ref(new Date('2024-08-31T16:00:00.000Z'));
 const maxDate = ref(addYears(new Date(), 2));
 const minTime = ref(
@@ -250,17 +224,8 @@ const fileChanged = async function () {
             body: formData
         });
         if (response.ok) {
-            // var data = await response.json();
-            // var pieces = data.files[0].fd.split("/");
-            // this.booking.fd = "/images/" + pieces.pop();
-
-            // booking.value.fd = data.files[0].fd;
-
             var data = await response.text();
             booking.value.filename = data;
-
-            // alert(booking.value.filename)
-
         } else {
             console.log(response.status);
         }
@@ -594,7 +559,7 @@ onMounted(() => {
                 <div class="control buttons">
                     <button class="button is-link" type="submit" v-if="!isReading">Submit</button>
                     <button class="button is-link is-warning" type="button" @click="withdraw"
-                        v-if="isReading && booking.username == name">Withdraw</button>
+                        v-if="isReading && booking.isOwner">Withdraw</button>
                     <button class="button is-link is-success" type="button" @click="changeStatus('Approved')"
                         v-if="isReading && canApprove && booking.status != 'Approved'">Approve</button>
                     <button class="button is-link is-danger" type="button" @click="changeStatus('Rejected')"
