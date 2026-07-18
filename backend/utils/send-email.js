@@ -1,14 +1,20 @@
 const { EmailClient, KnownEmailSendStatus } = require("@azure/communication-email");
 require("dotenv").config();
 
-// This code demonstrates how to fetch your connection string
-// from an environment variable.
-const connectionString = process.env['COMMUNICATION_SERVICES_CONNECTION_STRING'];
-const emailClient = new EmailClient(connectionString);
+function getEmailClient() {
+    const connectionString = process.env['COMMUNICATION_SERVICES_CONNECTION_STRING'];
+
+    if (!connectionString) {
+        throw new Error('COMMUNICATION_SERVICES_CONNECTION_STRING is not configured');
+    }
+
+    return new EmailClient(connectionString);
+}
 
 async function sendEmail(booking) {
     const POLLER_WAIT_TIME = 10
     try {
+        const emailClient = getEmailClient();
         const message = {
             senderAddress: "<donotreply@1bfbe8a3-ed15-4f02-b234-22c449805775.azurecomm.net>",
             content: {
