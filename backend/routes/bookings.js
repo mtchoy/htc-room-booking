@@ -4,7 +4,7 @@ var router = express.Router();
 const { addBusinessDays, formatISO9075, addDays } = require('date-fns')
 const { connectToDB, ObjectId } = require('../utils/db');
 const { sendEmail } = require('../utils/send-email');
-const { getBlobSasUri } = require('../utils/storage-blob');
+const { getBlobSasUri } = require('../utils/blobService');
 
 // Create new booking iteme
 router.post('/', async (req, res) => {
