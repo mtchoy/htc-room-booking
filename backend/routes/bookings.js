@@ -2,10 +2,8 @@ var express = require('express');
 var router = express.Router();
 
 const { addBusinessDays, formatISO9075, addDays } = require('date-fns')
-// const checkToken = require('../middlewares/checkToken');
 const { connectToDB, ObjectId } = require('../utils/db');
 const { sendEmail } = require('../utils/send-email');
-const verifyToken = require('../middlewares/verifyToken');
 const { getBlobSasUri } = require('../utils/storage-blob');
 
 // Create new booking iteme
