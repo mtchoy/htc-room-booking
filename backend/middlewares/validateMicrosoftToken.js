@@ -1,25 +1,44 @@
 const jwt = require('jsonwebtoken');
 const jwksClient = require('jwks-rsa');
 
-// 1. Setup the JWKS client to fetch Microsoft's public keys dynamically
-const client = jwksClient({
-    jwksUri: 'https://login.microsoftonline.com/common/discovery/v2.0/keys', // Use your tenant ID instead of 'common' if single-tenant
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 5
-});
+require('dotenv').config();
 
-// Helper function to extract the public signing key matching the token's header 'kid'
-function getKey(header, callback) {
-    client.getSigningKey(header.kid, function (err, key) {
-        if (err) return callback(err);
-        const signingKey = key.getPublicKey();
-        callback(null, signingKey);
-    });
+function getValidationConfig() {
+    const tenantId = process.env.MICROSOFT_TENANT_ID;
+    const audience = process.env.MICROSOFT_CLIENT_ID;
+
+    if (!tenantId || !audience) {
+        return null;
+    }
+
+    return { tenantId, audience };
 }
 
+// 1. Setup the JWKS client to fetch Microsoft's public keys dynamically
 // 2. The Express Middleware
 const validateMicrosoftToken = (req, res, next) => {
+    const validationConfig = getValidationConfig();
+
+    if (!validationConfig) {
+        return res.status(500).json({ error: 'Server misconfiguration: Microsoft token validation is not configured.' });
+    }
+
+    const { tenantId, audience } = validationConfig;
+    const client = jwksClient({
+        jwksUri: `https://login.microsoftonline.com/${tenantId}/discovery/v2.0/keys`,
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5
+    });
+
+    const getKey = (header, callback) => {
+        client.getSigningKey(header.kid, function (err, key) {
+            if (err) return callback(err);
+            const signingKey = key.getPublicKey();
+            callback(null, signingKey);
+        });
+    };
+
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -30,8 +49,8 @@ const validateMicrosoftToken = (req, res, next) => {
 
     // Configure validation constraints
     const options = {
-        audience: process.env.MICROSOFT_CLIENT_ID, // Your Azure App Registration Client ID / Application ID URI
-        issuer: `https://login.microsoftonline.com/${process.env.MICROSOFT_TENANT_ID}/v2.0`,
+        audience,
+        issuer: `https://login.microsoftonline.com/${tenantId}/v2.0`,
         algorithms: ['RS256']
     };
 
@@ -39,6 +58,24 @@ const validateMicrosoftToken = (req, res, next) => {
     jwt.verify(token, getKey, options, (err, decoded) => {
         if (err) {
             return res.status(401).json({ error: 'Unauthorized: Token validation failed.', details: err.message });
+        }
+
+        if (decoded.tid !== tenantId) {
+            return res.status(401).json({ error: 'Unauthorized: Token tenant does not match the configured tenant.' });
+        }
+
+        if (!decoded.preferred_username && !decoded.upn) {
+            return res.status(401).json({ error: 'Unauthorized: Token does not include a user identity claim.' });
+        }
+
+        if (!decoded.scp && !decoded.roles) {
+            return res.status(401).json({ error: 'Unauthorized: Token is missing delegated scopes or application roles.' });
+        }
+
+        if (decoded._claim_names && decoded._claim_names.groups) {
+            return res.status(403).json({
+                error: 'Forbidden: Token group claims are overage-managed. Group-based authorization is not supported for this token.'
+            });
         }
 
         // Attach decoded user claims to the request object for use down the line
